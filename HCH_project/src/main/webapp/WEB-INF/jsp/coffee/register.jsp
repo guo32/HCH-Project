@@ -22,8 +22,12 @@
 		<form action="register-completion" enctype="multipart/form-data" method="post">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
 			<input type="hidden" name="category" id="category" value="cb"/>
-			<!-- <input type="text" name="like" id="like" value="0"/> -->
 			<table class="post-content-1">
+				<tr>
+					<td colspan="2">
+						<h2>원두 등록</h2>
+					</td>
+				</tr>
 				<tr>
 					<td class="input-label-2"><label for="name">원두명</label></td>
 					<td><input type="text" name="name" id="name" class="input-box-3" value="${coffeeRegisterRequest.name}" placeholder="원두명"/></td>

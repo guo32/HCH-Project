@@ -19,7 +19,7 @@
 			<tr><td><h3>정상적으로 삭제되었습니다.</h3></td></tr>
 			<tr>
 				<td>
-					<button type="button" onClick="location.href='/coffee/posts'" class="short-button-1">목록으로</button>
+					<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
 				</td>
 			</tr>
 		</table>

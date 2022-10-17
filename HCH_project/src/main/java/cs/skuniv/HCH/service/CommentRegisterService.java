@@ -24,5 +24,14 @@ public class CommentRegisterService {
 				LocalDateTime.now());
 		commentDao.insert(newComment);
 	}
+	
+	/* 댓글 삭제 */
+	public void remove(int id) throws Exception {
+		Comment comment = commentDao.selectById(id);
+		if(comment == null) {
+			throw new Exception("NonexistentCommentException");
+		}
+		commentDao.delete(comment);
+	}
 
 }

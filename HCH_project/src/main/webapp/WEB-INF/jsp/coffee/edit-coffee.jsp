@@ -12,6 +12,24 @@
 	.post-content-1 tr:not(:last-child) { border-bottom: 1px solid #777777; }
 </style>
 </head>
+<script type="text/javascript">
+	var flag = false;
+	function showImage() {
+		var imageOpenButtonId = document.getElementById('openImage');
+		var previousImageId = document.getElementById('previousImage');
+		
+		if(!flag) {
+			previousImageId.style = 'display:block';
+			imageOpenButtonId.innerText = '이전 이미지 닫기';
+			flag = true;
+		} else {
+			previousImageId.style = 'display:none';
+			imageOpenButtonId.innerText = '이전 이미지 확인하기';
+			flag = false;
+		}
+		
+	}
+</script>
 <body>
 <div id="wrap">
 	<!-- 상단 -->
@@ -23,11 +41,12 @@
 		<form action="edit-coffee-completion?num=${coffee.num}" enctype="multipart/form-data" method="post">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
 			<input type="hidden" name="category" id="category" value="cb"/>
-			<!-- <input type="text" name="like" id="like" value="0"/> -->
 			<table class="post-content-1">
 				<tr>
-					<td colspan="2"> 이미지칸(임시) </td>
-				</tr>
+					<td colspan="2">
+						<h2>원두 정보 수정</h2>
+					</td>
+				</tr>			
 				<tr>
 					<td class="input-label-2"><label for="name">원두명</label></td>
 					<td><input type="text" name="name" id="name" class="input-box-3" value="${coffee.name}" placeholder="원두명"/></td>
@@ -69,7 +88,7 @@
 					<td class="input-label-2"><label for="rating">평점</label></td>
 					<td>
 						<c:set var="rating" value="${coffee.rating}"/>
-						<select name="rating" id="rating">
+						<select name="rating" id="rating" disabled>
 							<option value="1.0" <c:if test="${rating >= 1 && rating < 2}"><c:out value="selected"/></c:if>>★☆☆☆☆</option>
 							<option value="2.0" <c:if test="${rating >= 2 && rating < 3}"><c:out value="selected"/></c:if>>★★☆☆☆</option>
 							<option value="3.0" <c:if test="${rating >= 3 && rating < 4}"><c:out value="selected"/></c:if>>★★★☆☆</option>
@@ -77,7 +96,6 @@
 							<option value="5.0" <c:if test="${rating == 5}"><c:out value="selected"/></c:if>>★★★★★</option>
 						</select>
 					</td>
-					<!-- <td><input type="text" name="rating" id="rating" class="input-box-3" value="${coffee.rating}" placeholder="평점"/></td> -->
 				</tr>
 				<tr>
 					<td class="input-label-2"><label for="review">후기</label></td>
@@ -85,9 +103,17 @@
 				</tr>
 				<tr>
 					<td class="input-label-2"><label for="filename">이미지</label></td>
-					<td><input type="file" name="imagefile" id="filename" value="${coffee.filename}"/></td>
+					<td>
+						<div>
+							<input type="file" name="imagefile" id="filename" value="${coffee.filename}"/>
+							<button type="button" onClick="showImage()" class="short-button-1" id="openImage" style="width: 130px; margin: 1% 0;">이전 이미지 확인하기</button>
+						</div>
+						<div id="previousImage" style="display: none;">
+							<img src="${pageContext.request.contextPath}/resources/image/${coffee.filename}" width="195px" height="250px" class="post-content-1-main-image" style="margin-top: 2%;"/>
+						</div>
+					</td>
 				</tr>
-				<tr>
+				<tr>					
 					<td colspan="2"><input type="submit" value="수정" class="long-button-1"/></td>		
 				</tr>
 			</table>

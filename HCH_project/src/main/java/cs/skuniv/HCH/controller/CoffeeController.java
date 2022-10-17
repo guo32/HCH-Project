@@ -19,14 +19,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
 import cs.skuniv.HCH.dao.CommentDao;
-import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dto.Coffee;
 import cs.skuniv.HCH.dto.Comment;
-import cs.skuniv.HCH.dto.Favorite;
 import cs.skuniv.HCH.dto.Member;
 import cs.skuniv.HCH.request.CoffeeRegisterRequest;
+import cs.skuniv.HCH.request.CoffeeSearchDetailRequest;
 import cs.skuniv.HCH.request.CommentRegisterRequest;
 import cs.skuniv.HCH.service.CoffeeRegisterService;
+import cs.skuniv.HCH.service.CoffeeSearchDetailService;
 import cs.skuniv.HCH.service.CommentRegisterService;
 import cs.skuniv.HCH.service.FavoriteService;
 
@@ -37,6 +37,8 @@ public class CoffeeController {
 	private CoffeeRegisterService coffeeRegSvc;
 	@Autowired
 	private CoffeeDao coffeeDao;
+	@Autowired
+	private CoffeeSearchDetailService coffeeSearchSvc;
 	
 	@Autowired
 	private CommentRegisterService commentRegSvc;
@@ -45,8 +47,6 @@ public class CoffeeController {
 	
 	@Autowired
 	private FavoriteService favoriteSvc;
-	@Autowired
-	private FavoriteDao favoriteDao;
 	
 	/* 이미지 파일 업로드 */
 	public String fileUpload(MultipartFile file, HttpServletRequest req) {
@@ -108,6 +108,18 @@ public class CoffeeController {
 	/* 제품(커피) 상세 정보 페이지 */
 	@RequestMapping(value="/coffee/post", method=RequestMethod.GET)
 	public String coffeeDetailInfo(Model model, HttpServletRequest req) {
+		try {
+			String commentEdit = req.getParameter("commentEdit");
+			if(commentEdit != null) {
+				if(commentEdit.equals("delete")) {
+					int id = Integer.parseInt(req.getParameter("id"));
+					commentRegSvc.remove(id);
+				}				
+			}
+		} catch (Exception e) {
+			System.out.println("댓글 삭제 실패");
+		}
+		
 		int num = Integer.parseInt(req.getParameter("num"));
 		
 		// 등록된 제품 정보		
@@ -143,14 +155,40 @@ public class CoffeeController {
 	}
 	
 	@RequestMapping(value="/coffee/post-comment", method=RequestMethod.POST)
-	public String postCoffeeCommentCompletion(CommentRegisterRequest regReq) {
-		try {
+	public String postCoffeeCommentCompletion(Model model, CommentRegisterRequest regReq, HttpServletRequest req) {
+		try {			
 			commentRegSvc.regist(regReq);
-			return "coffee/post-comment";
+			
+			// 게시물 번호
+			int num = Integer.parseInt(req.getParameter("num"));
+			Coffee coffee = coffeeDao.selectByNum(num);	
+			
+			// 접속 중인 멤버
+			HttpSession session = req.getSession();
+			Member member = (Member)session.getAttribute("member");
+			
+			// 재검색
+			coffee = coffeeDao.selectByNum(num);
+			model.addAttribute("coffee", coffee);
+				
+			// 등록된 댓글
+			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
+			model.addAttribute("comments", comments);
+					
+			// 평점 평균
+			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
+			model.addAttribute("ratingAvg", ratingAvg);
+						
+			// 좋아요 여부
+			if(member != null) {
+				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
+				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);		
+			}
 		} catch (Exception ex) {
-			System.out.println("댓글 등록 실패");
-			return "coffee/post";
+			System.out.println("댓글 등록 실패");			
 		}
+		
+		return "coffee/post";
 	}
 	
 	/* 관심 등록 처리 */
@@ -228,13 +266,36 @@ public class CoffeeController {
 	/* 제품(커피) 페이지 */
 	@RequestMapping(value="/coffee/posts", method=RequestMethod.GET)
 	public String coffeeList(Model model, HttpServletRequest req) {
+		// 일반 검색
 		String search = req.getParameter("q");
+		// 제조사별 분류
 		String manufacturer = req.getParameter("manufacturer");
 		List<Coffee> coffeeList;
 		
-		if(search != null) coffeeList = coffeeDao.selectSearchString(search);
-		else if(manufacturer != null) coffeeList = coffeeDao.selectManufacturer(manufacturer);
-		else coffeeList = coffeeDao.selectAll();			
+		if(search != null) {
+			coffeeList = coffeeDao.selectSearchString(search);			
+		}
+		else if(manufacturer != null) {
+			coffeeList = coffeeDao.selectManufacturer(manufacturer);			
+		}
+		else coffeeList = coffeeDao.selectAll();
+		
+		model.addAttribute("search", search);
+		model.addAttribute("manufacturerSearch", manufacturer);
+		
+		// 상세 검색
+		model.addAttribute("coffeeSearchDetailRequest", new CoffeeSearchDetailRequest());
+		
+		Collections.reverse(coffeeList);
+		model.addAttribute("coffeeList", coffeeList);
+		
+		return "coffee/posts";
+	}
+	
+	/* 상세 검색 */
+	@RequestMapping(value="/coffee/posts-datail-search", method=RequestMethod.GET)
+	public String coffeeDetailSearchList(Model model, CoffeeSearchDetailRequest dsReq) {
+		List<Coffee> coffeeList = coffeeSearchSvc.search(dsReq);
 		
 		Collections.reverse(coffeeList);
 		model.addAttribute("coffeeList", coffeeList);
@@ -264,7 +325,11 @@ public class CoffeeController {
 			@RequestParam("imagefile") MultipartFile file, HttpServletRequest req) {
 		try {
 			int num = Integer.parseInt(req.getParameter("num"));
+			// 현재 접속 중인 멤버
+			HttpSession session = req.getSession();
+			Member member = (Member)session.getAttribute("member");
 			Coffee coffee = coffeeDao.selectByNum(num);
+			
 			model.addAttribute("coffee", coffee);
 			
 			/* 변경된 이미지 파일이 없는 경우 */
@@ -277,7 +342,25 @@ public class CoffeeController {
 			
 			coffeeRegSvc.edit(regReq, Integer.parseInt(req.getParameter("num")));
 			
-			return "coffee/edit-coffee-completion";
+			// 재검색
+			coffee = coffeeDao.selectByNum(num);
+			model.addAttribute("coffee", coffee);
+			
+			// 등록된 댓글
+			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
+			model.addAttribute("comments", comments);
+			
+			// 평점 평균
+			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
+			model.addAttribute("ratingAvg", ratingAvg);
+			
+			// 좋아요 여부
+			if(member != null) {
+				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
+				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);		
+			}
+			
+			return "coffee/post";
 		} catch (Exception ex) {
 			System.out.println("수정 실패");
 			return "coffee/posts";

@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
@@ -103,12 +104,13 @@ public class CoffeeDao {
 		return results;
 	}
 	
+	/* 일반 검색 */
 	public List<Coffee> selectSearchString(String search) {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		
 		String searchData = "%" + search + "%";
 		String sql = "select * from coffee where ";
-		sql += "name like ?";
+		sql += "name like ? or manufacturer like ? or review like ?";
 		
 		List<Coffee> results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
 			public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -120,7 +122,57 @@ public class CoffeeDao {
 						rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
 				return coffee;
 			}
-		}, searchData);
+		}, searchData, searchData, searchData);
+		
+		return results;
+	}
+	
+	/* 상세 검색 */
+	public List<Coffee> selectSearchDetail(String sqlData, List<String> data) {
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		String sql = "select * from coffee where" + sqlData;
+		
+		List<Coffee> results = new ArrayList<>();
+		
+		/* list 내 아이템 개수 별로 분리 */
+		if(data.size() == 1)
+			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
+				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
+							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
+							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
+							rs.getDouble("ratingsum"), rs.getString("review"),
+							LocalDateTime.parse(rs.getString("regdate"), format),
+							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
+					return coffee;
+				}
+			}, data.get(0));
+		
+		if(data.size() == 2)
+			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
+				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
+							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
+							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
+							rs.getDouble("ratingsum"), rs.getString("review"),
+							LocalDateTime.parse(rs.getString("regdate"), format),
+							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
+					return coffee;
+				}
+			}, data.get(0), data.get(1));
+		
+		if(data.size() == 3)
+			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
+				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
+					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
+							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
+							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
+							rs.getDouble("ratingsum"), rs.getString("review"),
+							LocalDateTime.parse(rs.getString("regdate"), format),
+							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
+					return coffee;
+				}
+			}, data.get(0), data.get(1), data.get(2));
 		
 		return results;
 	}

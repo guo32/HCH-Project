@@ -17,15 +17,16 @@
 		<%@include file="../search.jsp"%>		
 	</div>
 	<div>
-		<table class="post-content-1">
-			<c:if test="${member.id==coffee.registrant}">
-				<tr>
-					<td colspan="2">
-						<a href="edit-coffee?num=${coffee.num}">수정</a>
-						<a href="delete-coffee?num=${coffee.num}">삭제</a>						
-					</td>
-				</tr>
-			</c:if>
+		<table class="post-content-1">			
+			<tr>
+				<td colspan="2">
+					<button type="button" onClick="location.href='/coffee/posts'" class="short-button-1">목록으로</button>
+					<c:if test="${member.id==coffee.registrant}">
+						<button type="button" onClick="location.href='/coffee/edit-coffee?num=${coffee.num}'" class="short-button-edit">수정</button>
+						<button type="button" onClick="location.href='/coffee/delete-coffee?num=${coffee.num}'" class="short-button-delete">삭제</button>
+					</c:if>					
+				</td>
+			</tr>
 			<tr>
 				<td rowspan="2" width="195px"><img src="${pageContext.request.contextPath}/resources/image/${coffee.filename}" width="195px" height="250px" class="post-content-1-main-image"/></td>
 				<td>
@@ -163,10 +164,15 @@
 							<c:forEach var="j" begin="1" end="${5-commentRating}">
 								<img src="${pageContext.request.contextPath}/resources/image/iconmonstr-star-lined.svg" width="17" height="17">
 							</c:forEach>
-						</td>						
+						</td>
+						<td>
+							<c:if test="${member.id==comment.registrant}">								
+								<button type="button" onClick="location.href='/coffee/post?num=${coffee.num}&id=${comment.id}&commentEdit=delete'" class="short-button-delete">삭제</button>
+							</c:if>
+						</td>	
 					</tr>
-					<tr><td colspan="2"><p>${comment.content}</p></td></tr>
-					<tr><td colspan="2"><p style="font-size: 90%; color: #999999;">${comment.regdate}에 작성함.</p></td></tr>				
+					<tr><td colspan="3"><p>${comment.content}</p></td></tr>
+					<tr><td colspan="3"><p style="font-size: 90%; color: #999999;">${comment.regdate}에 작성함.</p></td></tr>				
 				</table>
 			</c:forEach>
 		</c:if>

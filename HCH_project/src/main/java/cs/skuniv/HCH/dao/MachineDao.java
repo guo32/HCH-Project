@@ -101,7 +101,30 @@ public class MachineDao {
 		return results;
 	}
 	
-	/* 제품 삭제 */
+	/* 제품(machine) 수정 */
+	public void update(final Machine machine) {
+		jdbcTemplate.update("update machine set name = ?, brand = ?, price = ?, type = ?, color = ?, review = ?, filename = ?" + " where id = ?",
+				machine.getName(),
+				machine.getBrand(),
+				machine.getPrice(),
+				machine.getType(),
+				machine.getColor(),
+				machine.getReview(),
+				machine.getFilename(),
+				machine.getId());
+	}
+	
+	/* 평점 합계 수정 */
+	public void updateRatingSum(final Machine machine) {
+		jdbcTemplate.update("update machine set ratingsum = ? where id = ?", machine.getRatingsum(), machine.getId());
+	}
+	
+	/* 좋아요 개수 수정 */
+	public void updateFavorite(final Machine machine) {
+		jdbcTemplate.update("update machine set favorite = ? where id = ?", machine.getFavorite(), machine.getId());
+	}
+	
+	/* 제품(machine) 삭제 */
 	public void delete(final Machine machine) {
 		jdbcTemplate.update("delete from machine where id = ?", machine.getId());
 	}

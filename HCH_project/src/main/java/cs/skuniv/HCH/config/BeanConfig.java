@@ -14,6 +14,7 @@ import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dao.MachineDao;
 import cs.skuniv.HCH.dao.MemberDao;
 import cs.skuniv.HCH.service.CoffeeRegisterService;
+import cs.skuniv.HCH.service.CoffeeSearchDetailService;
 import cs.skuniv.HCH.service.CommentRegisterService;
 import cs.skuniv.HCH.service.FavoriteService;
 import cs.skuniv.HCH.service.MachineRegisterService;
@@ -79,6 +80,11 @@ public class BeanConfig {
 	@Bean
 	public CoffeeRegisterService coffeeRegSvc() {
 		return new CoffeeRegisterService(coffeeDao());
+	}
+	
+	@Bean
+	public CoffeeSearchDetailService coffeeSearchSvc() {
+		return new CoffeeSearchDetailService(coffeeDao());
 	}
 	
 	/* 가전 */

@@ -24,6 +24,11 @@
 			<input type="hidden" name="category" id="category" value="cm"/>
 			<table class="post-content-1">
 				<tr>
+					<td colspan="2">
+						<h2>가전 등록</h2>
+					</td>
+				</tr>
+				<tr>
 					<td class="input-label-2"><label for="name">가전명</label></td>
 					<td><input type="text" name="name" id="name" class="input-box-3" value="${machineRegisterRequest.name}" placeholder="가전명"/></td>
 				</tr>
@@ -43,6 +48,7 @@
 						<input type="radio" name="type" value="자동"/>자동
 						<input type="radio" name="type" value="수동"/>수동
 						<input type="radio" name="type" value="커피메이커"/>커피메이커
+						<input type="radio" name="type" value="에스프레소 머신"/>에스프레소 머신
 						<input type="radio" name="type" value="No Data"/>정보 없음
 					</td>
 				</tr>

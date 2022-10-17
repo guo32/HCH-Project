@@ -37,12 +37,43 @@ public class CommentDao {
 				comment.getRegdate());
 	}
 	
+	/* 댓글 삭제 */
+	public void delete(final Comment comment) {
+		if(comment.getCategory().equals("cb")) {
+			Coffee coffee = coffeeDao.selectByNum(comment.getPosting());
+			coffee.setRatingsum(coffee.getRatingsum() - comment.getRating());
+			coffeeDao.updateRatingSum(coffee);
+		}
+		
+		jdbcTemplate.update("delete from comment where id = ?", comment.getId());
+	}
+	
+	/* 댓글 검색 */
+	public Comment selectById(int id) {
+		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+		
+		List<Comment> results = jdbcTemplate.query("select * from comment where id = ?", (ResultSet rs, int rowNum)->{
+			Comment comment = new Comment(
+					rs.getInt("id"),
+					rs.getString("registrant"),
+					rs.getInt("posting"),
+					rs.getString("category"),
+					rs.getString("content"),
+					rs.getDouble("rating"),
+					LocalDateTime.parse(rs.getString("regdate"), format));
+			return comment;
+		}, id);
+		
+		return results.isEmpty() ? null : results.get(0);
+	}
+	
 	/* 게시물별 댓글 검색 */
 	public List<Comment> selectByPost(int post, String category) {
 		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		
 		List<Comment> results = jdbcTemplate.query("select * from comment where posting = ? and category = ?", (ResultSet rs, int rowNum)->{
 			Comment comment = new Comment(
+					rs.getInt("id"),
 					rs.getString("registrant"),
 					rs.getInt("posting"),
 					rs.getString("category"),

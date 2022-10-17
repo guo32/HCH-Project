@@ -24,12 +24,24 @@
 			datailSearchId.style = 'display:block';
 			flag = true;
 			detailSearchButtonId.innerText = '상세검색 -';
-		}			
-		else {
+		} else {
 			datailSearchId.style = 'display:none';
 			flag = false;
 			detailSearchButtonId.innerText = '상세검색 +';
 		}			
+	}
+	
+	/* 맛(노트) 기타 입력란 */
+	function showTasteOtherText() {
+		var tasteOtherId = document.getElementById('tasteOther');
+		var tasteOtherTextId = document.getElementById('tasteOtherText');
+		
+		// 기타 체크 여부 확인
+		if(tasteOtherId.checked == true) {
+			tasteOtherTextId.style = 'display:inline-block';
+		} else {
+			tasteOtherTextId.style = 'display:none';
+		}
 	}
 </script>
 <body>
@@ -54,15 +66,23 @@
 		<!-- 세부 검색 -->
 		<div class="post-content-1">
 			<div id="detailSearchButton" onclick="openAndCloseDetailSearch()" style="color: #333333;">상세검색 +</div>
-			<form id="detailSearch" style="display: none;">
+			<form method="get" id="detailSearch" action="${pageContext.request.contextPath}/coffee/posts-datail-search" style="display: none;">
 				<table style="border-collapse: collapse;">
 					<tr>
 						<td>제조사</td>
-						<td><input type="text" name="manufaturer"/></td>
+						<td>
+							<c:if test="${manufacturerSearch != null}">
+								<input type="text" name="manufacturer" id="manufacturer" value="${manufacturerSearch}"/>
+							</c:if>
+							<c:if test="${manufacturerSearch == null}">
+								<input type="text" name="manufacturer" id="manufacturer" value="${coffeeSearchDetailRequest.manufacturer}"/>
+							</c:if>
+						</td>
 					</tr>
 					<tr>
 						<td>가격</td>
 						<td>
+							<input type="radio" name="price" value="null" checked/>미선택
 							<input type="radio" name="price" value="5000"/>5000원 미만
 							<input type="radio" name="price" value="10000"/>10000원 미만 
 							<input type="radio" name="price" value="15000"/>15000원 미만
@@ -73,6 +93,7 @@
 					<tr>
 						<td>로스팅</td>
 						<td>
+							<input type="radio" name="roastlevel" value="null" checked/>미선택
 							<input type="radio" name="roastlevel" value="Green Bean"/>Green Bean
 							<input type="radio" name="roastlevel" value="Very Light"/>Very Light
 							<input type="radio" name="roastlevel" value="Light"/>Light
@@ -89,16 +110,20 @@
 					<tr>
 						<td>맛(노트)</td>
 						<td>
-							<input type="checkbox" name="taste" value="견과류"/>견과류
-							<input type="checkbox" name="taste" value="초콜렛"/>초콜렛
-							<input type="checkbox" name="taste" value="과일향"/>과일향
-							<input type="checkbox" name="taste" value="꽃향기"/>꽃향기
-							기타 <input type="text" name="taste"/>
+							<input type="radio" name="taste" value="null" checked/>미선택
+							<input type="radio" name="taste" value="견과류"/>견과류
+							<input type="radio" name="taste" value="초콜릿"/>초콜릿
+							<input type="radio" name="taste" value="과일향"/>과일향
+							<input type="radio" name="taste" value="꽃향기"/>꽃향기
+							<input type="radio" name="taste" id="tasteOther" value="other" onclick="showTasteOtherText()"/>기타
+							<!-- 기타 입력란 -->
+							<input type="text" name="tasteOther" id="tasteOtherText" style="display: none;"/>
 						</td>
 					</tr>
 					<tr>
 						<td>용량</td>
 						<td>
+							<input type="radio" name="volume" value="null" checked/>미선택
 							<input type="radio" name="volume" value="100"/>100g 미만
 							<input type="radio" name="volume" value="300"/>300g 미만
 							<input type="radio" name="volume" value="500"/>500g 미만
@@ -110,7 +135,7 @@
 					<tr>
 						<td>평점 평균</td>
 						<td>
-							<input type="radio" name="rating" value="4.5"/>4.5 이상
+							<input type="radio" name="rating" value="4.5" checked/>4.5 이상
 							<input type="radio" name="rating" value="4.0"/>4.0 이상
 							<input type="radio" name="rating" value="3.5"/>3.5 이상
 							<input type="radio" name="rating" value="3.0"/>3.0 이상
@@ -125,8 +150,17 @@
 					</tr>
 				</table>
 			</form>
-		</div>
-		<table style="margin: 0 auto;">			
+			<div style="color: #777777; margin: 2% 0;">
+				&quot;
+				<c:choose>
+					<c:when test="${search != null}">${search}</c:when>
+					<c:when test="${manufacturerSearch != null}">${manufacturerSearch}</c:when>
+					<c:otherwise>전체</c:otherwise>
+				</c:choose>				
+				&quot;&nbsp;:&nbsp;검색 결과
+			</div>
+		</div>		
+		<table style="margin: 0 auto;">	
 			<c:forEach var="coffee" items="${coffeeList}" varStatus="i">
 				<c:if test="${i.index % 3 == '0'}"><tr></c:if>
 					<td style="/*padding: 10px;*/">

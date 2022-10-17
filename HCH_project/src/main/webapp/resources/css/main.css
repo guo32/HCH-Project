@@ -162,6 +162,31 @@ li { list-style: none; }
 	color: #f2d0a7;
 	font-size: 80%;
 	box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+	margin-bottom: 2%;
+}
+.short-button-edit {
+	width: 45px;
+	height: 22px;
+	text-align: center;
+	border-radius: 12px;
+	border: 0;
+	background-color: #8C6642;
+	color: #ffffff;
+	font-size: 80%;
+	box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+	margin-bottom: 2%;
+}
+.short-button-delete {
+	width: 45px;
+	height: 22px;
+	text-align: center;
+	border-radius: 12px;
+	border: 0;
+	background-color: #ff4042;
+	color: #ffffff;
+	font-size: 80%;
+	box-shadow: 1px 1px 2px 0px rgba(0, 0, 0, 0.2);
+	margin-bottom: 2%;
 }
 .box-button-1 {
 	width: 72px;
@@ -207,6 +232,15 @@ li { list-style: none; }
 .post-content-1-main-image {
 	border-radius: 15px;
 	margin: 0 10px 10px 0;
+}
+
+/* 마이페이지 회원정보 테이블 */
+.member-info-content {
+	width: 100%;
+	border-collapse: collapse;
+}
+.member-info-content tr {
+	border-bottom: 1px solid #777777;
 }
 
 .result-box-1 {

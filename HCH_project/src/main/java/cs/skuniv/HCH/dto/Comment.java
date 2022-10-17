@@ -23,6 +23,17 @@ public class Comment {
 		this.regdate = regdate;
 	}
 	
+	public Comment(int id, String registrant, int posting, String category, 
+			String content, double rating, LocalDateTime regdate) {
+		this.id = id;
+		this.registrant = registrant;
+		this.posting = posting;
+		this.category = category;
+		this.content = content;
+		this.rating = rating;
+		this.regdate = regdate;
+	}
+	
 	public int getId() {
 		return id;
 	}

@@ -5,7 +5,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>HCH : ${coffee.name}</title>
+<title>HCH : ${machine.name}</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css?after">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
 </head>
@@ -17,15 +17,16 @@
 		<%@include file="../search.jsp"%>		
 	</div>
 	<div>
-		<table class="post-content-1">
-			<c:if test="${member.id==machine.registrant}">
-				<tr>
-					<td colspan="2">
-						<a href="edit-machine?id=${machine.id}">수정</a>
-						<a href="delete-machine?id=${machine.id}">삭제</a>						
-					</td>
-				</tr>
-			</c:if>
+		<table class="post-content-1">			
+			<tr>
+				<td colspan="2">
+					<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
+					<c:if test="${member.id==machine.registrant}">
+						<button type="button" onClick="location.href='/machine/edit-machine?id=${machine.id}'" class="short-button-edit">수정</button>
+						<button type="button" onClick="location.href='/machine/delete-machine?id=${machine.id}'" class="short-button-delete">삭제</button>
+					</c:if>					
+				</td>
+			</tr>
 			<tr>
 				<td rowspan="2" width="195px"><img src="${pageContext.request.contextPath}/resources/image/${machine.filename}" width="195px" height="250px" class="post-content-1-main-image"/></td>
 				<td>
@@ -68,16 +69,12 @@
 							<td>${machine.price}원</td>
 						</tr>
 						<tr>
-							<td>로스팅</td>
-							<td>${coffee.roastlevel}</td>
+							<td>타입</td>
+							<td>${machine.type}</td>
 						</tr>
 						<tr>
-							<td>노트</td>
-							<td>${coffee.taste}</td>
-						</tr>
-						<tr>
-							<td>용량</td>
-							<td>${coffee.volume}g</td>
+							<td>색상</td>
+							<td>${machine.color}</td>
 						</tr>
 					</table>
 				</td>
@@ -97,19 +94,19 @@
 						</c:forEach>
 					(${ratingAvg})</b>
 					<br>
-					<p class="comment-content">${coffee.review}</p>
+					<p class="comment-content">${machine.review}</p>
 					<br>
-					<p class="comment-regdate">${coffee.registrant} | ${coffee.regdate}에 게시함.</p>
+					<p class="comment-regdate">${machine.registrant} | ${machine.regdate}에 게시함.</p>
 				</td>
 			</tr>
 		</table>		
 	</div>
 	<!-- 댓글 -->
 	<div>
-		<form action="post-comment?num=${coffee.num}" method="post">
+		<form action="post-comment?id=${machine.id}" method="post">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/>
-			<input type="hidden" name="posting" id="posting" value="${coffee.num}"/>
-			<input type="hidden" name="category" id="category" value="cb"/>
+			<input type="hidden" name="posting" id="posting" value="${machine.id}"/>
+			<input type="hidden" name="category" id="category" value="cm"/>
  			<table class="post-content-1">
 				<tr>
 					<td colspan="2"><h3>추가 의견</h3></td>
@@ -163,10 +160,15 @@
 							<c:forEach var="j" begin="1" end="${5-commentRating}">
 								<img src="${pageContext.request.contextPath}/resources/image/iconmonstr-star-lined.svg" width="17" height="17">
 							</c:forEach>
-						</td>						
+						</td>
+						<td>
+							<c:if test="${member.id==comment.registrant}">								
+								<button type="button" onClick="location.href='/machine/post?id=${machine.id}&cid=${comment.id}&commentEdit=delete'" class="short-button-delete">삭제</button>
+							</c:if>
+						</td>	
 					</tr>
-					<tr><td colspan="2"><p>${comment.content}</p></td></tr>
-					<tr><td colspan="2"><p style="font-size: 90%; color: #999999;">${comment.regdate}에 작성함.</p></td></tr>				
+					<tr><td colspan="3"><p>${comment.content}</p></td></tr>
+					<tr><td colspan="3"><p style="font-size: 90%; color: #999999;">${comment.regdate}에 작성함.</p></td></tr>				
 				</table>
 			</c:forEach>
 		</c:if>
