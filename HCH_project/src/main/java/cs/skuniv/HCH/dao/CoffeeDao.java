@@ -17,6 +17,18 @@ import cs.skuniv.HCH.dto.Coffee;
 public class CoffeeDao {
 	
 	private JdbcTemplate jdbcTemplate;
+	private DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	private RowMapper<Coffee> coffeeRowMapper = new RowMapper<Coffee>() {
+		public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
+			Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
+					rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
+					rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
+					rs.getDouble("ratingsum"), rs.getString("review"),
+					LocalDateTime.parse(rs.getString("regdate"), format),
+					rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"), rs.getInt("comment"));
+			return coffee;
+		}
+	};
 	
 	public CoffeeDao(DataSource dataSource) {
 		this.jdbcTemplate = new JdbcTemplate(dataSource);
@@ -49,130 +61,51 @@ public class CoffeeDao {
 
 	/* num(게시물 번호) 검색 */
 	public Coffee selectByNum(int num) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		
-		List<Coffee> results = jdbcTemplate.query("select * from coffee where num = ?", new RowMapper<Coffee>() {
-			public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-						rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-						rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-						rs.getDouble("ratingsum"), rs.getString("review"),
-						LocalDateTime.parse(rs.getString("regdate"), format),
-						rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-				return coffee;
-			}
-		}, num);
+		List<Coffee> results = jdbcTemplate.query("select * from coffee where num = ?", coffeeRowMapper, num);
 		
 		return results.isEmpty() ? null : results.get(0);
 	}
 	
 	/* 전체 목록 */
 	public List<Coffee> selectAll() {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		
-		List<Coffee> results = jdbcTemplate.query("select * from coffee", new RowMapper<Coffee>() {
-			public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-						rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-						rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-						rs.getDouble("ratingsum"), rs.getString("review"),
-						LocalDateTime.parse(rs.getString("regdate"), format),
-						rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-				return coffee;
-			}
-		});
+		List<Coffee> results = jdbcTemplate.query("select * from coffee", coffeeRowMapper);
 		
 		return results;
 	}
 	
 	/* 제조사별 검색 */
 	public List<Coffee> selectManufacturer(String manufacturer) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		
-		List<Coffee> results = jdbcTemplate.query("select * from coffee where manufacturer = ?", new RowMapper<Coffee>() {
-			public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-						rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-						rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-						rs.getDouble("ratingsum"), rs.getString("review"),
-						LocalDateTime.parse(rs.getString("regdate"), format),
-						rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-				return coffee;
-			}
-		}, manufacturer);
+		List<Coffee> results = jdbcTemplate.query("select * from coffee where manufacturer = ?", coffeeRowMapper, manufacturer);
 		
 		return results;
 	}
 	
 	/* 일반 검색 */
 	public List<Coffee> selectSearchString(String search) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		
 		String searchData = "%" + search + "%";
 		String sql = "select * from coffee where ";
 		sql += "name like ? or manufacturer like ? or review like ?";
 		
-		List<Coffee> results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
-			public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-				Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-						rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-						rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-						rs.getDouble("ratingsum"), rs.getString("review"),
-						LocalDateTime.parse(rs.getString("regdate"), format),
-						rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-				return coffee;
-			}
-		}, searchData, searchData, searchData);
+		List<Coffee> results = jdbcTemplate.query(sql, coffeeRowMapper, searchData, searchData, searchData);
 		
 		return results;
 	}
 	
 	/* 상세 검색 */
 	public List<Coffee> selectSearchDetail(String sqlData, List<String> data) {
-		DateTimeFormatter format = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 		String sql = "select * from coffee where" + sqlData;
 		
 		List<Coffee> results = new ArrayList<>();
 		
 		/* list 내 아이템 개수 별로 분리 */
 		if(data.size() == 1)
-			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
-				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-							rs.getDouble("ratingsum"), rs.getString("review"),
-							LocalDateTime.parse(rs.getString("regdate"), format),
-							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-					return coffee;
-				}
-			}, data.get(0));
+			results = jdbcTemplate.query(sql, coffeeRowMapper, data.get(0));
 		
 		if(data.size() == 2)
-			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
-				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-							rs.getDouble("ratingsum"), rs.getString("review"),
-							LocalDateTime.parse(rs.getString("regdate"), format),
-							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-					return coffee;
-				}
-			}, data.get(0), data.get(1));
+			results = jdbcTemplate.query(sql, coffeeRowMapper, data.get(0), data.get(1));
 		
 		if(data.size() == 3)
-			results = jdbcTemplate.query(sql, new RowMapper<Coffee>() {
-				public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
-					Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-							rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-							rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
-							rs.getDouble("ratingsum"), rs.getString("review"),
-							LocalDateTime.parse(rs.getString("regdate"), format),
-							rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"));
-					return coffee;
-				}
-			}, data.get(0), data.get(1), data.get(2));
+			results = jdbcTemplate.query(sql, coffeeRowMapper, data.get(0), data.get(1), data.get(2));
 		
 		return results;
 	}
@@ -186,8 +119,8 @@ public class CoffeeDao {
 	}
 	
 	/* 평점 합계 수정 */
-	public void updateRatingSum(final Coffee coffee) {
-		jdbcTemplate.update("update coffee set ratingsum = ? where num = ?", coffee.getRatingsum(), coffee.getNum());
+	public void updateRatingSumAndCommentCount(final Coffee coffee, int vary) {
+		jdbcTemplate.update("update coffee set ratingsum = ?, comment = ? where num = ?", coffee.getRatingsum(), coffee.getComment() + vary, coffee.getNum());
 	}
 	
 	/* 좋아요 개수 수정 */

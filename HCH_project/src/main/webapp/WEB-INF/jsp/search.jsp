@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <div>
-	<form method="get">
+	<form method="get" action="${pageContext.request.contextPath}/search-result">
 		<table style="margin: 0 auto;">
 			<tr>
 				<td><input type="search" name="q" id="search" placeholder="검색어를 입력하세요."/></td>
-				<td><input type="submit" value="검색" id="search-button"/></td>
+				<td><input type="image" class="search-button" src="${pageContext.request.contextPath}/resources/image/search-icon.svg" width="34" height="34"/></td>
 			</tr>
 		</table>
 	</form>

@@ -7,6 +7,7 @@
 <title>HCH : 정보수정</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/machineEditValidation.js"></script>
 <style>
 	.post-content-1 tr:not(:last-child) { border-bottom: 1px solid #777777; }
 </style>
@@ -34,12 +35,12 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div>
-		<form action="edit-machine-completion" enctype="multipart/form-data" method="post">
+		<form action="edit-machine-completion?id=${machine.id}" enctype="multipart/form-data" method="post" onsubmit="return checkForm()">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
-			<input type="hidden" name="category" id="category" value="cm"/>
+			<input type="hidden" name="category" id="category" value="${machine.category}"/>
 			<table class="post-content-1">
 				<tr>
 					<td colspan="2">
@@ -68,7 +69,8 @@
 						<input type="radio" name="type" value="수동" <c:if test="${type.equals('수동')}"><c:out value="checked"/></c:if>/>수동
 						<input type="radio" name="type" value="커피메이커" <c:if test="${type.equals('커피메이커')}"><c:out value="checked"/></c:if>/>커피메이커
 						<input type="radio" name="type" value="에스프레소 머신" <c:if test="${type.equals('에스프레소 머신')}"><c:out value="checked"/></c:if>/>에스프레소 머신
-						<input type="radio" name="type" value="No Data" <c:if test="${type.equals('No Data')}"><c:out value="checked"/></c:if>/>정보 없음
+						<input type="radio" name="type" value="자동 그라인더" <c:if test="${type.equals('자동 그라인더')}"><c:out value="checked"/></c:if>/>자동 그라인더
+						<input type="radio" name="type" value="other" <c:if test="${type.equals('other')}"><c:out value="checked"/></c:if>/>그 외
 					</td>
 				</tr>
 				<tr>

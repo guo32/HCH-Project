@@ -1,14 +1,25 @@
 package cs.skuniv.HCH.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import cs.skuniv.HCH.dao.CommentDao;
+import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dao.MachineDao;
+import cs.skuniv.HCH.dto.Comment;
+import cs.skuniv.HCH.dto.Favorite;
 import cs.skuniv.HCH.dto.Machine;
 import cs.skuniv.HCH.request.MachineRegisterRequest;
 
 public class MachineRegisterService {
 	
 	private MachineDao machineDao;
+	@Autowired
+	private CommentDao commentDao;
+	@Autowired
+	private FavoriteDao favoriteDao;
 	
 	public MachineRegisterService(MachineDao machineDao) {
 		this.machineDao = machineDao;
@@ -56,8 +67,16 @@ public class MachineRegisterService {
 		Machine machine = machineDao.selectById(id);
 		if(machine == null) {
 			throw new Exception("NonexistentMachineException");
-		}
-		machineDao.delete(machine);
+		} else {
+			// 댓글 삭제
+			List<Comment> commentList = commentDao.selectByPost(id, machine.getCategory());
+			if(!commentList.isEmpty()) { for(Comment comment : commentList) commentDao.delete(comment); }
+			// 관심 삭제
+			List<Favorite> favoriteList = favoriteDao.selectPosting(id, machine.getCategory());
+			if(!favoriteList.isEmpty()) { for(Favorite favorite : favoriteList) favoriteDao.delete(favorite); }
+			
+			machineDao.delete(machine);
+		}		
 	}
 
 }

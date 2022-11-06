@@ -7,15 +7,8 @@
 <title>HCH : 회원정보수정</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/memberEditValidation.js"></script>
 </head>
-<script type="text/javascript">
-	function checkForm() {
-		if(document.editForm.password.value !== document.editForm.confirmPassword.value) {
-			alert("비밀번호가 일치하지 않습니다.");
-			return false;
-		}	
-	}	
-</script>
 <body>
 <div id="wrap">
 	<div id="wrap-content-top">

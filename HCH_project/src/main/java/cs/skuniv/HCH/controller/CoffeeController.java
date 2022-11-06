@@ -1,6 +1,7 @@
 package cs.skuniv.HCH.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -101,7 +102,7 @@ public class CoffeeController {
 	public List<Comment> getRegistedComment(int num, String category) {
 		List<Comment> comments = commentDao.selectByPost(num, category);
 		Collections.reverse(comments); // 최신순
-		
+				
 		return comments;
 	}
 	
@@ -131,7 +132,7 @@ public class CoffeeController {
 		model.addAttribute("comments", comments);
 		
 		// 평점 평균
-		double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
+		double ratingAvg = coffee.getRatingsum() / coffee.getComment();
 		model.addAttribute("ratingAvg", ratingAvg);
 		
 		// 현재 접속 중인 회원의 좋아요 여부
@@ -157,35 +158,10 @@ public class CoffeeController {
 	@RequestMapping(value="/coffee/post-comment", method=RequestMethod.POST)
 	public String postCoffeeCommentCompletion(Model model, CommentRegisterRequest regReq, HttpServletRequest req) {
 		try {			
-			commentRegSvc.regist(regReq);
-			
-			// 게시물 번호
-			int num = Integer.parseInt(req.getParameter("num"));
-			Coffee coffee = coffeeDao.selectByNum(num);	
-			
-			// 접속 중인 멤버
-			HttpSession session = req.getSession();
-			Member member = (Member)session.getAttribute("member");
-			
-			// 재검색
-			coffee = coffeeDao.selectByNum(num);
-			model.addAttribute("coffee", coffee);
-				
-			// 등록된 댓글
-			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
-			model.addAttribute("comments", comments);
-					
-			// 평점 평균
-			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
-			model.addAttribute("ratingAvg", ratingAvg);
-						
-			// 좋아요 여부
-			if(member != null) {
-				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
-				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);		
-			}
+			commentRegSvc.regist(regReq);			
+			coffeeDetailInfo(model, req);
 		} catch (Exception ex) {
-			System.out.println("댓글 등록 실패");			
+			System.out.println("댓글 등록 실패");		
 		}
 		
 		return "coffee/post";
@@ -197,29 +173,22 @@ public class CoffeeController {
 		// 게시물 번호
 		int num = Integer.parseInt(req.getParameter("num"));
 		Coffee coffee = coffeeDao.selectByNum(num);	
+		
+		// 현재 페이지가 posts(게시물 리스트)
+		String focusOnPosts = req.getParameter("posts");
+		//String focusOnIndex = req.getParameter("index");
+		
 		// 접속 중인 멤버
 		HttpSession session = req.getSession();
 		Member member = (Member)session.getAttribute("member");
 		
 		try {
 			favoriteSvc.add(member.getId(), num, coffee.getCategory());
-			// 재검색
-			coffee = coffeeDao.selectByNum(num);
-			model.addAttribute("coffee", coffee);
 			
-			// 등록된 댓글
-			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
-			model.addAttribute("comments", comments);
-			
-			// 평점 평균
-			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
-			model.addAttribute("ratingAvg", ratingAvg);
-			
-			// 좋아요 여부
-			if(member != null) {
-				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
-				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);			
-			}
+			if(focusOnPosts != null && focusOnPosts.equals("true")) {
+				coffeeList(model, req);
+				return "coffee/posts";
+			} else coffeeDetailInfo(model, req);
 		} catch (Exception ex) {
 			System.out.println("관심 등록 실패");
 		}		
@@ -233,29 +202,21 @@ public class CoffeeController {
 		// 게시물 번호
 		int num = Integer.parseInt(req.getParameter("num"));
 		Coffee coffee = coffeeDao.selectByNum(num);	
+		
+		// 현재 페이지가 posts(게시물 리스트)
+		String focusOnPosts = req.getParameter("posts");
+				
 		// 접속 중인 멤버
 		HttpSession session = req.getSession();
 		Member member = (Member)session.getAttribute("member");
 		
 		try {
 			favoriteSvc.release(member.getId(), num, coffee.getCategory());
-			// 재검색
-			coffee = coffeeDao.selectByNum(num);
-			model.addAttribute("coffee", coffee);
 			
-			// 등록된 댓글
-			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
-			model.addAttribute("comments", comments);
-			
-			// 평점 평균
-			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
-			model.addAttribute("ratingAvg", ratingAvg);
-			
-			// 좋아요 여부
-			if(member != null) {
-				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
-				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);			
-			}
+			if(focusOnPosts != null && focusOnPosts.equals("true")) {
+				coffeeList(model, req);
+				return "coffee/posts";
+			} else coffeeDetailInfo(model, req);
 		} catch (Exception ex) {
 			System.out.println("관심 해제 실패");
 		}		
@@ -271,14 +232,24 @@ public class CoffeeController {
 		// 제조사별 분류
 		String manufacturer = req.getParameter("manufacturer");
 		List<Coffee> coffeeList;
+		// 접속 중인 멤버
+		HttpSession session = req.getSession();
+		Member member = (Member)session.getAttribute("member");		
 		
 		if(search != null) {
 			coffeeList = coffeeDao.selectSearchString(search);			
-		}
-		else if(manufacturer != null) {
+		} else if(manufacturer != null) {
 			coffeeList = coffeeDao.selectManufacturer(manufacturer);			
+		} else coffeeList = coffeeDao.selectAll();
+		
+		// 좋아요 여부
+		if(member != null) {
+			List<Integer> favoriteList = new ArrayList<>();
+			for(Coffee coffee:coffeeList) {
+				if(favoriteSvc.check(member, coffee.getCategory(), coffee.getNum())) favoriteList.add(coffee.getNum());
+			}
+			if(!favoriteList.isEmpty()) model.addAttribute("favorite", favoriteList);
 		}
-		else coffeeList = coffeeDao.selectAll();
 		
 		model.addAttribute("search", search);
 		model.addAttribute("manufacturerSearch", manufacturer);
@@ -325,9 +296,6 @@ public class CoffeeController {
 			@RequestParam("imagefile") MultipartFile file, HttpServletRequest req) {
 		try {
 			int num = Integer.parseInt(req.getParameter("num"));
-			// 현재 접속 중인 멤버
-			HttpSession session = req.getSession();
-			Member member = (Member)session.getAttribute("member");
 			Coffee coffee = coffeeDao.selectByNum(num);
 			
 			model.addAttribute("coffee", coffee);
@@ -342,23 +310,7 @@ public class CoffeeController {
 			
 			coffeeRegSvc.edit(regReq, Integer.parseInt(req.getParameter("num")));
 			
-			// 재검색
-			coffee = coffeeDao.selectByNum(num);
-			model.addAttribute("coffee", coffee);
-			
-			// 등록된 댓글
-			List<Comment> comments = getRegistedComment(num, coffee.getCategory());
-			model.addAttribute("comments", comments);
-			
-			// 평점 평균
-			double ratingAvg = coffee.getRatingsum() / (comments.size() + 1);
-			model.addAttribute("ratingAvg", ratingAvg);
-			
-			// 좋아요 여부
-			if(member != null) {
-				boolean favoriteCheck = favoriteSvc.check(member, coffee.getCategory(), num);
-				if(favoriteCheck) model.addAttribute("favorite", favoriteCheck);		
-			}
+			coffeeDetailInfo(model, req);
 			
 			return "coffee/post";
 		} catch (Exception ex) {

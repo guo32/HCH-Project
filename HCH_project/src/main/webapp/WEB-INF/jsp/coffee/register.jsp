@@ -7,6 +7,7 @@
 <title>HCH : 원두등록</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/coffeeValidation.js"></script>
 <style>
 	.post-content-1 tr:not(:last-child) { border-bottom: 1px solid #777777; }
 </style>
@@ -16,10 +17,10 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div>
-		<form action="register-completion" enctype="multipart/form-data" method="post">
+		<form action="register-completion" enctype="multipart/form-data" method="post" onsubmit="return checkForm()">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
 			<input type="hidden" name="category" id="category" value="cb"/>
 			<table class="post-content-1">
@@ -53,7 +54,7 @@
 						<input type="radio" name="roastlevel" value="Full City"/>Full City
 						<input type="radio" name="roastlevel" value="French"/>French
 						<input type="radio" name="roastlevel" value="Itanlian"/>Italian
-						<input type="radio" name="roastlevel" value="No Data"/>정보 없음
+						<input type="radio" name="roastlevel" value="No Data" checked/>정보 없음
 					</td>
 				</tr>
 				<tr>
@@ -68,14 +69,11 @@
 					<td class="input-label-2"><label for="rating">평점</label></td>
 					<td>
 						<select name="rating" id="rating">
-							<option value="1.0">★☆☆☆☆</option>
-							<option value="2.0">★★☆☆☆</option>
-							<option value="3.0">★★★☆☆</option>
-							<option value="4.0">★★★★☆</option>
-							<option value="5.0">★★★★★</option>
+							<% for(double i = 1.0; i <= 5.0; i+=0.5) { %>
+							<option value="<%=i %>"><%=i %></option>
+							<% } %>
 						</select>
 					</td>
-					<!-- <td><input type="text" name="rating" id="rating" class="input-box-3" placeholder="평점"/></td>  -->
 				</tr>
 				<tr>
 					<td class="input-label-2"><label for="review">후기</label></td>

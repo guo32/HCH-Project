@@ -18,6 +18,7 @@ public class Machine {
 	private LocalDateTime regdate;
 	private String registrant;
 	private String filename;
+	private int comment;
 	
 	public Machine(String category, String name,
 			String brand, int price, String type, String color,
@@ -41,21 +42,11 @@ public class Machine {
 	public Machine(int id, String category, String name,
 			String brand, int price, String type, String color,
 			double rating, double ratingsum, String review, int favorite,
-			LocalDateTime regdate, String registrant, String filename) {
-		this.id = id;
-		this.category = category;
-		this.name = name;
-		this.brand = brand;
-		this.price = price;
-		this.type = type;
-		this.color = color;
-		this.rating = rating;
-		this.ratingsum = ratingsum;
-		this.review = review;
-		this.favorite = favorite;
-		this.regdate = regdate;
-		this.registrant = registrant;
-		this.filename = filename;
+			LocalDateTime regdate, String registrant, String filename, int comment) {
+		this(category, name, brand, price, type, color, rating, ratingsum, review, regdate, registrant, filename);
+		this.id = id;		
+		this.favorite = favorite;		
+		this.comment = comment;
 	}
 	
 	/* 게시물 미리보기 */
@@ -182,6 +173,14 @@ public class Machine {
 
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+
+	public int getComment() {
+		return comment;
+	}
+
+	public void setComment(int comment) {
+		this.comment = comment;
 	}	
 
 }

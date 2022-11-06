@@ -2,14 +2,16 @@ package cs.skuniv.HCH.service;
 
 import java.util.List;
 
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
+import cs.skuniv.HCH.dao.EtcDao;
 import cs.skuniv.HCH.dao.FavoriteDao;
+import cs.skuniv.HCH.dao.MachineDao;
 import cs.skuniv.HCH.dto.Coffee;
+import cs.skuniv.HCH.dto.Etc;
 import cs.skuniv.HCH.dto.Favorite;
+import cs.skuniv.HCH.dto.Machine;
 import cs.skuniv.HCH.dto.Member;
 
 public class FavoriteService {
@@ -17,6 +19,10 @@ public class FavoriteService {
 	private FavoriteDao favDao;
 	@Autowired
 	private CoffeeDao coffeeDao;
+	@Autowired
+	private MachineDao machineDao;
+	@Autowired
+	private EtcDao etcDao;
 	
 	public FavoriteService(FavoriteDao favDao) {
 		this.favDao = favDao;
@@ -33,6 +39,18 @@ public class FavoriteService {
 			coffee.setFavorite(++count);
 			coffeeDao.updateFavorite(coffee);
 		}
+		if(category.equals("cm")) {
+			Machine machine = machineDao.selectById(posting);
+			int count = machine.getFavorite();
+			machine.setFavorite(++count);
+			machineDao.updateFavorite(machine);
+		}
+		if(category.equals("ce")) {
+			Etc etc = etcDao.selectById(posting);
+			int count = etc.getFavorite();
+			etc.setFavorite(++count);
+			etcDao.updateFavorite(etc);
+		}
 	}
 	
 	/* 관심 해제 */
@@ -46,6 +64,18 @@ public class FavoriteService {
 				int count = coffee.getFavorite();
 				coffee.setFavorite(--count);
 				coffeeDao.updateFavorite(coffee);
+			}
+			if(category.equals("cm")) {
+				Machine machine = machineDao.selectById(posting);
+				int count = machine.getFavorite();
+				machine.setFavorite(--count);
+				machineDao.updateFavorite(machine);
+			}
+			if(category.equals("ce")) {
+				Etc etc = etcDao.selectById(posting);
+				int count = etc.getFavorite();
+				etc.setFavorite(--count);
+				etcDao.updateFavorite(etc);
 			}
 		}
 	}

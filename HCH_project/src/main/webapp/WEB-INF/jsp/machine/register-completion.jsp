@@ -13,7 +13,7 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div id="wrap-content-bottom">
 		<table class="result-box-1">

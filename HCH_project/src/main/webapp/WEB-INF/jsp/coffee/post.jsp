@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=utf-8"
     pageEncoding="utf-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,7 +15,7 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div>
 		<table class="post-content-1">			
@@ -96,7 +97,7 @@
 						<c:forEach var="j" begin="1" end="${5-ratingAvg}">
 							<img src="${pageContext.request.contextPath}/resources/image/iconmonstr-star-lined.svg" width="17" height="17">
 						</c:forEach>
-					(${ratingAvg})</b>
+					(<fmt:formatNumber value="${ratingAvg}" pattern=".0"/>)</b>
 					<br>
 					<p class="comment-content">${coffee.review}</p>
 					<br>
@@ -133,7 +134,7 @@
 				</c:if>
 				<c:if test="${member!=null}">
 					<tr>
-						<td><textarea rows="6" cols="65" name="content" class="comment-box-1" id="content">소중한 의견을 남겨주세요.</textarea></td>
+						<td><textarea rows="6" cols="65" name="content" class="comment-box-1" id="content" placeholder="소중한 의견을 남겨주세요."></textarea></td>
 						<td><input type="submit" class="box-button-1" value="등록"/></td>
 					</tr>
 				</c:if>

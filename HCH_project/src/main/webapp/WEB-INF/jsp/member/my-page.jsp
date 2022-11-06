@@ -39,9 +39,12 @@
 					<td>${member.birth}</td>
 				</tr>
 			</table>
-			<a href="edit-member">회원정보수정</a>
-			<a href="withdrawal-member">회원탈퇴</a>
-			<a href="my-post">내 게시물</a>
+			<div style="margin-top: 2%;">
+				<button type="button" onClick="location.href='/member/withdrawal-member'" class="short-button-1" style="background-color: #ff4042;">회원탈퇴</button>
+				<button type="button" onClick="location.href='/member/edit-member'" class="short-button-1" style="width: 90px;">회원정보수정</button>
+				<button type="button" onClick="location.href='/member/my-post'" class="short-button-1">내 게시물</button>
+				<button type="button" onClick="location.href='/member/favorite-post'" class="short-button-1" style="width: 85px;">관심 게시물</button>				
+			</div>
 		</div>		
 	</div>
 	<%@include file="../footer.jsp"%>

@@ -10,14 +10,18 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
 import cs.skuniv.HCH.dao.CommentDao;
+import cs.skuniv.HCH.dao.EtcDao;
 import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dao.MachineDao;
 import cs.skuniv.HCH.dao.MemberDao;
 import cs.skuniv.HCH.service.CoffeeRegisterService;
 import cs.skuniv.HCH.service.CoffeeSearchDetailService;
 import cs.skuniv.HCH.service.CommentRegisterService;
+import cs.skuniv.HCH.service.EtcRegisterService;
+import cs.skuniv.HCH.service.EtcSearchDetailService;
 import cs.skuniv.HCH.service.FavoriteService;
 import cs.skuniv.HCH.service.MachineRegisterService;
+import cs.skuniv.HCH.service.MachineSearchDetailService;
 import cs.skuniv.HCH.service.MemberLoginService;
 import cs.skuniv.HCH.service.MemberRegisterService;
 
@@ -96,6 +100,27 @@ public class BeanConfig {
 	@Bean
 	public MachineRegisterService machineRegSvc() {
 		return new MachineRegisterService(machineDao());
+	}
+	
+	@Bean
+	public MachineSearchDetailService machineSearchSvc() {
+		return new MachineSearchDetailService(machineDao());
+	}
+	
+	/* 기타 */
+	@Bean
+	public EtcDao etcDao() {
+		return new EtcDao(dataSource());
+	}
+	
+	@Bean
+	public EtcRegisterService etcRegSvc() {
+		return new EtcRegisterService(etcDao());
+	}
+	
+	@Bean
+	public EtcSearchDetailService etcSearchSvc() {
+		return new EtcSearchDetailService(etcDao());
 	}
 	
 	/* 댓글 */

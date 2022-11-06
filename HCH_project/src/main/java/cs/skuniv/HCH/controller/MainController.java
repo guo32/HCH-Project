@@ -1,9 +1,13 @@
 package cs.skuniv.HCH.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -14,26 +18,78 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
+import cs.skuniv.HCH.dao.EtcDao;
+import cs.skuniv.HCH.dao.MachineDao;
 import cs.skuniv.HCH.dto.Coffee;
+import cs.skuniv.HCH.dto.Etc;
+import cs.skuniv.HCH.dto.Machine;
+import cs.skuniv.HCH.dto.Member;
+import cs.skuniv.HCH.service.FavoriteService;
 
 @Controller
 public class MainController {
 	
 	@Autowired
 	private CoffeeDao coffeeDao;
+	@Autowired
+	private MachineDao machineDao;
+	@Autowired
+	private EtcDao etcDao;
+	@Autowired
+	private FavoriteService favoriteSvc;
 	
 	@RequestMapping({"/", "/index"})
-	public String home(Model model) {
+	public String home(Model model, HttpServletRequest req) {
 		List<Coffee> coffeeList = coffeeDao.selectAll();
+		List<Machine> machineList = machineDao.selectAll();
+		List<Etc> etcList = etcDao.selectAll();
+		// 접속 중인 멤버
+		HttpSession session = req.getSession();
+		Member member = (Member)session.getAttribute("member");	
+		
 		Collections.reverse(coffeeList);
+		Collections.reverse(machineList);
+		Collections.reverse(etcList);
+		
+		// 좋아요 여부
+		if(member != null) {
+			List<Integer> favoriteList = new ArrayList<>();
+			for(Coffee coffee:coffeeList) {
+				if(favoriteSvc.check(member, coffee.getCategory(), coffee.getNum())) favoriteList.add(coffee.getNum());
+			}
+			if(!favoriteList.isEmpty()) model.addAttribute("favorite", favoriteList);
+		}
+		
 		model.addAttribute("coffeeList", coffeeList);
+		model.addAttribute("machineList", machineList);
+		model.addAttribute("etcList", etcList);
+		
 		return "index";
 	}
 	
 	@RequestMapping(value="/select-category")
 	public String selectCategory() { return "select-category"; }
 	
-	/* 파일 업로드 테스트 */
+	@RequestMapping(value="/search-result")
+	public String searchResult(Model model, HttpServletRequest req) { 
+		String search = req.getParameter("q");
+		
+		if(search != null) {
+			List<Coffee> coffeeList = coffeeDao.selectSearchString(search);
+			List<Machine> machineList = machineDao.selectSearchString(search);
+			List<Etc> etcList = etcDao.selectSearchString(search);
+			
+			model.addAttribute("coffeeList", coffeeList);
+			model.addAttribute("machineList", machineList);
+			model.addAttribute("etcList", etcList);
+			model.addAttribute("search", search);
+		} else { // 입력이 없을 때
+			model.addAttribute("blankSearch", true);
+		}
+		return "search-result"; 
+	}
+	
+	/* 파일 업로드 테스트 
 	@RequestMapping("/file-upload-test")
 	public String getFile() {
 		return "file-upload-test";
@@ -52,6 +108,6 @@ public class MainController {
 		}
 		
 		return "file-upload-test";
-	}
+	} */
 
 }

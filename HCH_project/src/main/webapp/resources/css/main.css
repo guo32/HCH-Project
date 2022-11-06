@@ -19,7 +19,7 @@
 a { text-decoration: none; color: inherit; }
 li { list-style: none; }
 
-/* description 말줄임 (IE 브라우저에서는 실행 안 됨) */
+/* description 말줄임 */
 .text-ellipsis {
 	overflow:hidden;
 	text-overflow:ellipsis;
@@ -99,6 +99,7 @@ li { list-style: none; }
 .list-content-item-2 { width: 20%; }
 .list-content-item-3 { width: 20%; }
 .list-content-item-4 { width: 25%; }
+
 
 .input-box-1 {
 	width: 320px;
@@ -200,6 +201,23 @@ li { list-style: none; }
 	margin: 0 15%;
 	box-shadow: 5px 5px 4px 0px rgba(0, 0, 0, 0.1);
 }
+.detail-search-button {
+	font-size: 95%;
+	background-color: darkslategrey;
+	color: #f2d0a7;
+    width: max-content;
+    padding: 1%;
+    border-radius: 15px 15px 0 0;
+    box-shadow: 5px 5px 4px 0px rgba(0, 0, 0, 0.1);
+}
+.detail-search-form {
+	display: block;
+    border: 2px solid darkslategray;
+    border-radius: 0 15px 15px 15px;
+    padding: 1%;
+    background-color: #ffffff;
+}
+
 .form-title-1 {
 	color: #f2d0a7;
 	font-size: 150%;
@@ -260,15 +278,11 @@ li { list-style: none; }
 	height: 40px;
 	padding: 2%;
 	border: 0;
-	border-radius: 15px 0 0 15px;
+	border-radius: 15px;
 	background-color: rgba(255, 255, 255, 0.5);
 }
-#search-button {
-	background-color: rgba(255, 255, 255, 0.5);
-	border: 0;
-	border-radius: 0 15px 15px 0;
-	height: 40px;
-	padding: 53%;
+.search-button {
+	padding: 0 20%;
 }
 
 /* 푸터 */

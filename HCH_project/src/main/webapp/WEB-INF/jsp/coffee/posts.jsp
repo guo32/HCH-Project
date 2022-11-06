@@ -23,11 +23,11 @@
 		if(!flag) {
 			datailSearchId.style = 'display:block';
 			flag = true;
-			detailSearchButtonId.innerText = '상세검색 -';
+			detailSearchButtonId.innerText = '상세검색 닫기';
 		} else {
 			datailSearchId.style = 'display:none';
 			flag = false;
-			detailSearchButtonId.innerText = '상세검색 +';
+			detailSearchButtonId.innerText = '상세검색 열기';
 		}			
 	}
 	
@@ -49,24 +49,14 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<!-- <%@include file="../search.jsp"%> -->
-		<div>
-			<form method="get" action="${pageContext.request.contextPath}/coffee/posts">
-				<table style="margin: 0 auto;">
-					<tr>
-						<td><input type="search" name="q" id="search" placeholder="검색어를 입력하세요."/></td>
-						<td><input type="submit" value="검색" id="search-button"/></td>
-					</tr>
-				</table>
-			</form>
-		</div>
+		<%@include file="search.jsp"%>
 	</div>
 	<!-- 하단 -->
 	<div id="wrap-content-bottom">		
 		<!-- 세부 검색 -->
 		<div class="post-content-1">
-			<div id="detailSearchButton" onclick="openAndCloseDetailSearch()" style="color: #333333;">상세검색 +</div>
-			<form method="get" id="detailSearch" action="${pageContext.request.contextPath}/coffee/posts-datail-search" style="display: none;">
+			<div id="detailSearchButton" onclick="openAndCloseDetailSearch()" class="detail-search-button">상세검색 열기</div>
+			<form method="get" id="detailSearch" class="detail-search-form" action="${pageContext.request.contextPath}/coffee/posts-datail-search" style="display: none;">
 				<table style="border-collapse: collapse;">
 					<tr>
 						<td>제조사</td>
@@ -82,12 +72,18 @@
 					<tr>
 						<td>가격</td>
 						<td>
-							<input type="radio" name="price" value="null" checked/>미선택
-							<input type="radio" name="price" value="5000"/>5000원 미만
-							<input type="radio" name="price" value="10000"/>10000원 미만 
-							<input type="radio" name="price" value="15000"/>15000원 미만
-							<input type="radio" name="price" value="20000"/>20000원 미만
-							<input type="radio" name="price" value="20001"/>20000원 이상
+							<table>
+								<tr><td><input type="radio" name="price" value="null" checked/>미선택</td></tr>
+								<% for(int i = 5, j = 0; i <= 25; i+=5, j++) { if(j % 3 == 0) { %>
+								<tr>
+								<% } %>
+								<td style="width: 33%;"><input type="radio" name="price" value="<%=i * 1000 %>"/>
+									<% if(i * 1000 < 10000) { %> <%= i * 1000 %>원 미만 <% } else { %>
+									<%= (i - 5) * 1000 %>원 ~ <%= i * 1000 %>원 <% } %>
+								</td>								
+								<% } %>
+								<td style="width: 33%;"><input type="radio" name="price" value="25001"/>25000원 이상</td>
+							</table>						
 						</td>
 					</tr>
 					<tr>
@@ -123,26 +119,28 @@
 					<tr>
 						<td>용량</td>
 						<td>
-							<input type="radio" name="volume" value="null" checked/>미선택
-							<input type="radio" name="volume" value="100"/>100g 미만
-							<input type="radio" name="volume" value="300"/>300g 미만
-							<input type="radio" name="volume" value="500"/>500g 미만
-							<input type="radio" name="volume" value="700"/>700g 미만
-							<input type="radio" name="volume" value="1000"/>1kg 미만
-							<input type="radio" name="volume" value="1001"/>1kg 이상
+							<table>
+								<tr><td><input type="radio" name="volume" value="null" checked/>미선택</td></tr>
+								<% for(int i = 100, j = 0; i <= 700; i+=200, j++) { if(j % 3 == 0) { %>
+								<tr>
+								<% } %>
+								<td style="width: 33%;"><input type="radio" name="volume" value="<%=i%>"/>
+									<% if(i - 200 < 0) { %> <%= i %>g 미만 <% } else { %>
+									<%= i - 200 %>g ~ <%= i %>g <% } %>
+								</td>								
+								<% } %>
+								<td style="width: 33%;"><input type="radio" name="volume" value="1000"/>700g ~ 1kg</td>								
+								<td style="width: 33%;"><input type="radio" name="volume" value="1001"/>1kg 이상</td>
+							</table>
 						</td>
 					</tr>
 					<tr>
 						<td>평점 평균</td>
 						<td>
 							<input type="radio" name="rating" value="4.5" checked/>4.5 이상
-							<input type="radio" name="rating" value="4.0"/>4.0 이상
-							<input type="radio" name="rating" value="3.5"/>3.5 이상
-							<input type="radio" name="rating" value="3.0"/>3.0 이상
-							<input type="radio" name="rating" value="2.5"/>2.5 이상
-							<input type="radio" name="rating" value="2.0"/>2.0 이상
-							<input type="radio" name="rating" value="1.5"/>1.5 이상
-							<input type="radio" name="rating" value="1.0"/>1.0 이상
+							<% for(double i = 4.0; i >= 1; i -= 0.5) { %>
+								<input type="radio" name="rating" value="<%=i %>"/><%=i %> 이상
+							<% } %>
 						</td>
 					</tr>
 					<tr>
@@ -177,7 +175,25 @@
 										<br>
 										<a href="post?num=${coffee.num}">${coffee.name}</a>
 									</td>
-									<td>♡</td>
+									<td>
+										<c:if test="${member==null}">
+											<img src="${pageContext.request.contextPath}/resources/image/iconmonstr-favorite-2.svg" width="17" height="17" style="margin: 0 5px;" onclick="alert('로그인이 필요합니다.')"/>
+										</c:if>
+										<c:if test="${member!=null}">
+											<c:choose>
+												<c:when test="${favorite.contains(coffee.num)}">
+													<form action="release-favorite?num=${coffee.num}&posts=true" method="post">
+														<input type="image" src="${pageContext.request.contextPath}/resources/image/iconmonstr-favorite-1.svg" width="17" height="17" style="margin: 0 5px;"/>
+													</form>
+												</c:when>
+												<c:otherwise>
+													<form action="add-favorite?num=${coffee.num}&posts=true" method="post">
+														<input type="image" src="${pageContext.request.contextPath}/resources/image/iconmonstr-favorite-2.svg" width="17" height="17" style="margin: 0 5px;"/>
+													</form>
+												</c:otherwise>									
+											</c:choose>
+										</c:if>	
+									</td>
 								</tr>
 								<tr class="box-content-1-content">
 									<td colspan="2">

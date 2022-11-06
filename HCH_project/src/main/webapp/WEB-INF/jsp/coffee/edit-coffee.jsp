@@ -8,6 +8,7 @@
 <title>HCH : 정보수정</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/coffeeEditValidation.js"></script>
 <style>
 	.post-content-1 tr:not(:last-child) { border-bottom: 1px solid #777777; }
 </style>
@@ -35,12 +36,12 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div>
-		<form action="edit-coffee-completion?num=${coffee.num}" enctype="multipart/form-data" method="post">
+		<form action="edit-coffee-completion?num=${coffee.num}" enctype="multipart/form-data" method="post" onsubmit="return checkForm()">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
-			<input type="hidden" name="category" id="category" value="cb"/>
+			<input type="hidden" name="category" id="category" value="${coffee.category}"/>
 			<table class="post-content-1">
 				<tr>
 					<td colspan="2">

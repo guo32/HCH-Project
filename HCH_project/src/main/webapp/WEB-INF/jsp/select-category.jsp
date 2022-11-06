@@ -10,7 +10,8 @@
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
 <style>
 	.category-box {
-		background-color: gray;
+		color: #f2d0a7;
+		background-color: #8C6642;
 		width: 80px;
 		padding: 50px 0;
 		margin: 10px 5px;
@@ -32,7 +33,7 @@
 			<tr>
 				<td><div class="category-box" onclick="location.href='${pageContext.request.contextPath}/coffee/register'">원두<br>(coffee)</div></td>
 				<td><div class="category-box" onclick="location.href='${pageContext.request.contextPath}/machine/register'">가전<br>(machine)</div></td>
-				<td><div class="category-box">기타<br>(etc)</div></td>
+				<td><div class="category-box" onclick="location.href='${pageContext.request.contextPath}/etc/register'">기타<br>(etc)</div></td>
 			</tr>
 		</table>
 	</div>

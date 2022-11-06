@@ -1,14 +1,25 @@
 package cs.skuniv.HCH.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
+import cs.skuniv.HCH.dao.CommentDao;
+import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dto.Coffee;
+import cs.skuniv.HCH.dto.Comment;
+import cs.skuniv.HCH.dto.Favorite;
 import cs.skuniv.HCH.request.CoffeeRegisterRequest;
 
 public class CoffeeRegisterService {
 	
 	private CoffeeDao coffeeDao;
+	@Autowired
+	private CommentDao commentDao;
+	@Autowired
+	private FavoriteDao favoriteDao;
 	
 	public CoffeeRegisterService(CoffeeDao coffeeDao) {
 		this.coffeeDao = coffeeDao;
@@ -56,8 +67,16 @@ public class CoffeeRegisterService {
 		Coffee coffee = coffeeDao.selectByNum(num);
 		if(coffee == null) {
 			throw new Exception("NonexistentCoffeeException");
-		}
-		coffeeDao.delete(coffee);
+		} else {
+			// 댓글 삭제
+			List<Comment> commentList = commentDao.selectByPost(num, coffee.getCategory());
+			if(!commentList.isEmpty()) { for(Comment comment : commentList) commentDao.delete(comment); }
+			// 관심 삭제
+			List<Favorite> favoriteList = favoriteDao.selectPosting(num, coffee.getCategory());
+			if(!favoriteList.isEmpty()) { for(Favorite favorite : favoriteList) favoriteDao.delete(favorite); }
+			
+			coffeeDao.delete(coffee);
+		}		
 	}
 
 }

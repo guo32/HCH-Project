@@ -1,7 +1,5 @@
 package cs.skuniv.HCH.controller;
 
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -12,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import cs.skuniv.HCH.dao.CoffeeDao;
-import cs.skuniv.HCH.dto.Coffee;
 import cs.skuniv.HCH.dto.Member;
 import cs.skuniv.HCH.request.MemberRegisterRequest;
 import cs.skuniv.HCH.service.MemberLoginService;
@@ -26,9 +22,7 @@ public class MemberController {
 	private MemberRegisterService memberRegSvc;
 	@Autowired
 	private MemberLoginService memberLoginSvc;
-	@Autowired
-	private CoffeeDao coffeeDao;
-	
+		
 	/* 회원가입 페이지 접근 */
 	@RequestMapping("/member/register")
 	public String getRegist() { return "member/register"; }
@@ -41,13 +35,12 @@ public class MemberController {
 	}
 	
 	@RequestMapping(value="/member/register-completion", method=RequestMethod.POST)
-	public String postRegistCompletion(MemberRegisterRequest regReq, HttpServletRequest req) {
+	public String postRegistCompletion(MemberRegisterRequest regReq, Model model) {
 		try {
 			memberRegSvc.regist(regReq);
 			return "member/register-completion";
 		} catch (Exception ex) {
-			HttpSession session = req.getSession();
-			session.setAttribute("id", regReq.getId());
+			model.addAttribute("usedId", regReq.getId());
 			return "member/register";
 		}
 	}
@@ -108,16 +101,6 @@ public class MemberController {
 	public String memberWithdrawal(HttpSession session) {
 		memberRegSvc.remove(session);
 		return "redirect:/";
-	}
-	
-	/* 내 게시물 페이지 */
-	@RequestMapping(value="/member/my-post")
-	public String mypost(Model model, HttpSession session) {
-		Member member = (Member)session.getAttribute("member");
-		List<Coffee> postingList = coffeeDao.selectByUserId(member.getId());
-		model.addAttribute("coffeePosting", postingList);
-		
-		return "member/my-post";
-	}
+	}	
 
 }

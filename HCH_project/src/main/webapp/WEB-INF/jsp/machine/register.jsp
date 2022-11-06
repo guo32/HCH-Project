@@ -7,6 +7,7 @@
 <title>HCH : 가전등록</title>
 <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/main.css">
 <link href="${pageContext.request.contextPath}/resources/image/coffee-bean.png" rel="shortcut icon" type="image/x-icon">
+<script type="text/javascript" src="${pageContext.request.contextPath}/resources/javascript/machineValidation.js"></script>
 <style>
 	.post-content-1 tr:not(:last-child) { border-bottom: 1px solid #777777; }
 </style>
@@ -16,10 +17,10 @@
 	<!-- 상단 -->
 	<div id="wrap-content-top">
 		<%@include file="../header.jsp"%>
-		<%@include file="../search.jsp"%>		
+		<%@include file="search.jsp"%>		
 	</div>
 	<div>
-		<form action="register-completion" enctype="multipart/form-data" method="post">
+		<form action="register-completion" enctype="multipart/form-data" method="post" onsubmit="return checkForm()">
 			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
 			<input type="hidden" name="category" id="category" value="cm"/>
 			<table class="post-content-1">
@@ -49,7 +50,8 @@
 						<input type="radio" name="type" value="수동"/>수동
 						<input type="radio" name="type" value="커피메이커"/>커피메이커
 						<input type="radio" name="type" value="에스프레소 머신"/>에스프레소 머신
-						<input type="radio" name="type" value="No Data"/>정보 없음
+						<input type="radio" name="type" value="자동 그라인더"/>자동 그라인더
+						<input type="radio" name="type" value="other" checked/>그 외
 					</td>
 				</tr>
 				<tr>
@@ -61,7 +63,7 @@
 						<input type="radio" name="color" value="red"/>red
 						<input type="radio" name="color" value="green"/>green
 						<input type="radio" name="color" value="beige"/>beige
-						<input type="radio" name="color" value="No Data"/>정보 없음
+						<input type="radio" name="color" value="No Data" checked/>정보 없음
 					</td>
 				</tr>
 				<tr>

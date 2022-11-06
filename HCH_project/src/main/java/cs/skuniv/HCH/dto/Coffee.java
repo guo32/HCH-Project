@@ -13,12 +13,13 @@ public class Coffee {
 	private String taste;			// 7. 맛
 	private int volume;				// 8. 용량
 	private double rating;			// 9. 평점
-	private double ratingsum;
-	private String review;			// 10. 후기
-	private LocalDateTime regdate;	// 11. 등록일
-	private String registrant;		// 12. 게시자
-	private String filename;		// 13. 사진 파일
-	private int favorite;			// 14. 좋아요 개수
+	private double ratingsum;		// 10. 평점 합계 : 평점 평균 계산에 사용
+	private String review;			// 11. 후기
+	private LocalDateTime regdate;	// 12. 등록일
+	private String registrant;		// 13. 게시자
+	private String filename;		// 14. 사진 파일
+	private int favorite;			// 15. 좋아요 개수
+	private int comment;			// 16. 댓글 개수 + 1 : 평점 평균 계산에 사용
 	
 	public Coffee(String category, String name, String manufacturer,
 			int price, String roastlevel, String taste,
@@ -57,22 +58,11 @@ public class Coffee {
 			String manufacturer, int price, String roastlevel, 
 			String taste, int volume, double rating, 
 			double ratingsum, String review, LocalDateTime regdate, 
-			String registrant, String filename, int favorite) {
-		this.num = num;
-		this.category = category;
-		this.name = name;
-		this.manufacturer = manufacturer;
-		this.price = price;
-		this.roastlevel = roastlevel;
-		this.taste = taste;
-		this.volume = volume;
-		this.rating = rating;
-		this.ratingsum = ratingsum;
-		this.review = review;
-		this.regdate = regdate;
-		this.registrant = registrant;
-		this.filename = filename;
+			String registrant, String filename, int favorite, int comment) {
+		this(category, name, manufacturer, price, roastlevel, taste, volume, rating, ratingsum, review, regdate, registrant, filename);
+		this.num = num;		
 		this.favorite = favorite;
+		this.comment = comment;
 	}
 
 	public int getNum() {
@@ -193,6 +183,14 @@ public class Coffee {
 
 	public void setFavorite(int favorite) {
 		this.favorite = favorite;
+	}
+
+	public int getComment() {
+		return comment;
+	}
+
+	public void setComment(int comment) {
+		this.comment = comment;
 	}	
 
 }

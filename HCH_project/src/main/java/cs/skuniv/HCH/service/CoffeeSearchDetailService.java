@@ -27,8 +27,9 @@ public class CoffeeSearchDetailService {
 		// 가격
 		if(!req.getPrice().equals("null")) {
 			if(!sql.equals("")) sql += " and";
-			if(req.getPrice().equals("20001")) sql += " price >= 20000";
-			else sql += (" price < " + req.getPrice());
+			if(req.getPrice().equals("25001")) sql += " price >= 25000";
+			else sql += (" price >= " + String.valueOf((Integer.parseInt(req.getPrice()) - 5000)) + " and price < " + req.getPrice());
+			// else sql += (" price < " + req.getPrice());
 		}
 		// 로스팅 정도 - 2
 		if(!req.getRoastlevel().equals("null")) {
@@ -46,15 +47,14 @@ public class CoffeeSearchDetailService {
 		// 용량
 		if(!req.getVolume().equals("null")) {
 			if(!sql.equals("")) sql += " and";
-			if(req.getVolume().equals("1001")) sql += " volue >= 1000";
-			else sql += (" volume < " + req.getVolume());
+			if(req.getVolume().equals("1001")) sql += " volume >= 1000";
+			else sql += (" volume >= " + String.valueOf((Integer.parseInt(req.getVolume()) - 200)) + " and volume < " + req.getVolume());
+			// else sql += (" volume < " + req.getVolume());
 		}
-		// 평점 평균: 임시로 게시자 등록 평균 검사
+		// 평점 평균
 		if(!sql.equals("")) sql += " and";
-		sql += (" rating >= " + req.getRating());
-		
-		// System.out.println(sql);
-		
+		sql += (" ratingsum / comment >= " + req.getRating());
+				
 		return coffeeDao.selectSearchDetail(sql, searchData);
 	}
 

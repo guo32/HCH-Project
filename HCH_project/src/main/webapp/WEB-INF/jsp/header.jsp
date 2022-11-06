@@ -22,7 +22,7 @@
 				<td id="logo"><a href="${pageContext.request.contextPath}/index">Home Cafe<br>Helper</a></td>
 				<td class="menu-item"><a href="${pageContext.request.contextPath}/coffee/posts">원두</a></td>
 				<td class="menu-item"><a href="${pageContext.request.contextPath}/machine/posts">가전</a></td>
-				<td class="menu-item"><a href="#">기타</a></td>
+				<td class="menu-item"><a href="${pageContext.request.contextPath}/etc/posts">기타</a></td>
 				<c:if test="${member==null}">
 					<td class="menu-item"><a href="#" onclick="alert('로그인이 필요합니다.')">+제품 등록하기</a></td>
 				</c:if>
