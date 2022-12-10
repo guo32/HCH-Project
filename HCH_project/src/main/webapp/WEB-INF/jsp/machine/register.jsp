@@ -21,7 +21,12 @@
 	</div>
 	<div>
 		<form action="register-completion" enctype="multipart/form-data" method="post" onsubmit="return checkForm()">
-			<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
+			<c:if test="${admin!=null}">
+				<input type="hidden" name="registrant" id="registrant" value="관리자"/>
+			</c:if>
+			<c:if test="${admin==null}">
+				<input type="hidden" name="registrant" id="registrant" value="${member.id}"/> <!-- hidden으로 변경할 것 -->
+			</c:if>
 			<input type="hidden" name="category" id="category" value="cm"/>
 			<table class="post-content-1">
 				<tr>

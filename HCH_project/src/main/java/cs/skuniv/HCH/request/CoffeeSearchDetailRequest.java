@@ -3,6 +3,7 @@ package cs.skuniv.HCH.request;
 /* 원두 상세 검색 시 사용되는 내용 */
 public class CoffeeSearchDetailRequest {
 	
+	private String nation; // 22.11.16 원산지 검색을 위해 추가
 	private String manufacturer;
 	private String price;
 	private String roastlevel;
@@ -10,7 +11,15 @@ public class CoffeeSearchDetailRequest {
 	private String tasteOther;
 	private String volume;
 	private String rating;
-	
+		
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+
 	public String getManufacturer() {
 		return manufacturer;
 	}

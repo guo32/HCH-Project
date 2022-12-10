@@ -8,9 +8,10 @@ public class Coffee {
 	private String category;		// 2. 카테고리
 	private String name;			// 3. 제품명(원두명)
 	private String manufacturer;	// 4. 제조사
+	private int nation;
 	private int price;				// 5. 가격
 	private String roastlevel;		// 6. 로스팅
-	private String taste;			// 7. 맛
+	private int taste;			// 7. 맛
 	private int volume;				// 8. 용량
 	private double rating;			// 9. 평점
 	private double ratingsum;		// 10. 평점 합계 : 평점 평균 계산에 사용
@@ -21,14 +22,15 @@ public class Coffee {
 	private int favorite;			// 15. 좋아요 개수
 	private int comment;			// 16. 댓글 개수 + 1 : 평점 평균 계산에 사용
 	
-	public Coffee(String category, String name, String manufacturer,
-			int price, String roastlevel, String taste,
+	public Coffee(String category, String name, String manufacturer, int nation,
+			int price, String roastlevel, int taste,
 			int volume, double rating, double ratingsum,
 			String review, LocalDateTime regdate,
 			String registrant, String filename) {
 		this.category = category;
 		this.name = name;
 		this.manufacturer = manufacturer;
+		this.nation = nation;
 		this.price = price;
 		this.roastlevel = roastlevel;
 		this.taste = taste;
@@ -55,11 +57,11 @@ public class Coffee {
 	
 	/* 게시물 */
 	public Coffee(int num, String category, String name, 
-			String manufacturer, int price, String roastlevel, 
-			String taste, int volume, double rating, 
+			String manufacturer, int nation, int price, String roastlevel, 
+			int taste, int volume, double rating, 
 			double ratingsum, String review, LocalDateTime regdate, 
 			String registrant, String filename, int favorite, int comment) {
-		this(category, name, manufacturer, price, roastlevel, taste, volume, rating, ratingsum, review, regdate, registrant, filename);
+		this(category, name, manufacturer, nation, price, roastlevel, taste, volume, rating, ratingsum, review, regdate, registrant, filename);
 		this.num = num;		
 		this.favorite = favorite;
 		this.comment = comment;
@@ -113,11 +115,11 @@ public class Coffee {
 		this.roastlevel = roastlevel;
 	}
 
-	public String getTaste() {
+	public int getTaste() {
 		return taste;
 	}
 
-	public void setTaste(String taste) {
+	public void setTaste(int taste) {
 		this.taste = taste;
 	}
 
@@ -191,6 +193,14 @@ public class Coffee {
 
 	public void setComment(int comment) {
 		this.comment = comment;
+	}
+
+	public int getNation() {
+		return nation;
+	}
+
+	public void setNation(int nation) {
+		this.nation = nation;
 	}	
 
 }

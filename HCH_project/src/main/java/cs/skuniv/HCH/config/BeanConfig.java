@@ -14,6 +14,9 @@ import cs.skuniv.HCH.dao.EtcDao;
 import cs.skuniv.HCH.dao.FavoriteDao;
 import cs.skuniv.HCH.dao.MachineDao;
 import cs.skuniv.HCH.dao.MemberDao;
+import cs.skuniv.HCH.dao.NationDao;
+import cs.skuniv.HCH.dao.NoteDao;
+import cs.skuniv.HCH.service.AdminLoginService;
 import cs.skuniv.HCH.service.CoffeeRegisterService;
 import cs.skuniv.HCH.service.CoffeeSearchDetailService;
 import cs.skuniv.HCH.service.CommentRegisterService;
@@ -143,6 +146,24 @@ public class BeanConfig {
 	@Bean
 	public FavoriteService favoriteSvc() {
 		return new FavoriteService(favoriteDao());
+	}
+	
+	/* 생산국 데이터 */
+	@Bean
+	public NationDao nationDao() {
+		return new NationDao(dataSource());
+	}
+	
+	/* 커피 노트 데이터 */
+	@Bean
+	public NoteDao noteDao() {
+		return new NoteDao(dataSource());
+	}
+	
+	/* 관리자 로그인 서비스 */
+	@Bean
+	public AdminLoginService adminLoginSvc() {
+		return new AdminLoginService();
 	}
 	
 }

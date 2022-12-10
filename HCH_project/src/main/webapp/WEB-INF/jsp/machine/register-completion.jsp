@@ -20,7 +20,12 @@
 			<tr><td><h3>정상적으로 등록되었습니다.</h3></td></tr>
 			<tr>
 				<td>
-					<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
+					<c:if test="${admin!=null}">
+						<button type="button" onClick="location.href='/admin/manage-machine-item'" class="short-button-1">목록으로</button>
+					</c:if>
+					<c:if test="${admin==null}">
+						<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
+					</c:if>
 				</td>
 			</tr>
 		</table>

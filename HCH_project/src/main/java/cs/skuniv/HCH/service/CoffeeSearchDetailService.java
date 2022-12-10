@@ -19,8 +19,13 @@ public class CoffeeSearchDetailService {
 	public List<Coffee> search(CoffeeSearchDetailRequest req) {
 		String sql = "";
 		List<String> searchData = new ArrayList<>();
+		
+		if(!req.getNation().equals("null")) {
+			sql += " nation = " + req.getNation();
+		}
 		// 제조사 - 1
 		if(req.getManufacturer() != null) {
+			if(!sql.equals("")) sql += " and";
 			sql += " manufacturer like ?";
 			searchData.add("%" + req.getManufacturer() + "%");
 		}
@@ -38,11 +43,14 @@ public class CoffeeSearchDetailService {
 			searchData.add(req.getRoastlevel());
 		}
 		// 맛(노트) - 3
-		if(!req.getTaste().equals("null")) {
+		if(!req.getTaste().equals("-1")) {
 			if(!sql.equals("")) sql += " and";
+			/*
 			sql += " taste like ?";
 			if(!req.getTaste().equals("other")) searchData.add("%" + req.getTaste() + "%");
 			else if(req.getTasteOther() != null) searchData.add("%" + req.getTasteOther() + "%");
+			*/
+			sql += " taste = " + req.getTaste();
 		}
 		// 용량
 		if(!req.getVolume().equals("null")) {

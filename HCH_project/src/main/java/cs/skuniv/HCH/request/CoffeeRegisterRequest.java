@@ -5,6 +5,7 @@ public class CoffeeRegisterRequest {
 	private String category;
 	private String name;
 	private String manufacturer;
+	private String nation;
 	private String price;
 	private String roastlevel;
 	private String taste;
@@ -15,6 +16,14 @@ public class CoffeeRegisterRequest {
 	private String filename;
 	private String favorite;
 	
+	public String getNation() {
+		return nation;
+	}
+
+	public void setNation(String nation) {
+		this.nation = nation;
+	}
+
 	public String getCategory() {
 		return category;
 	}

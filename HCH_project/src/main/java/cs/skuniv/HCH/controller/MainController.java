@@ -1,10 +1,8 @@
 package cs.skuniv.HCH.controller;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -13,17 +11,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
 import cs.skuniv.HCH.dao.EtcDao;
 import cs.skuniv.HCH.dao.MachineDao;
+import cs.skuniv.HCH.dao.NationDao;
+import cs.skuniv.HCH.dao.NoteDao;
 import cs.skuniv.HCH.dto.Coffee;
 import cs.skuniv.HCH.dto.Etc;
 import cs.skuniv.HCH.dto.Machine;
 import cs.skuniv.HCH.dto.Member;
+import cs.skuniv.HCH.dto.Nation;
+import cs.skuniv.HCH.dto.Note;
 import cs.skuniv.HCH.service.FavoriteService;
 
 @Controller
@@ -37,6 +36,11 @@ public class MainController {
 	private EtcDao etcDao;
 	@Autowired
 	private FavoriteService favoriteSvc;
+	
+	@Autowired
+	private NationDao nationDao;
+	@Autowired
+	private NoteDao noteDao;
 	
 	@RequestMapping({"/", "/index"})
 	public String home(Model model, HttpServletRequest req) {
@@ -87,6 +91,19 @@ public class MainController {
 			model.addAttribute("blankSearch", true);
 		}
 		return "search-result"; 
+	}
+	
+	/* nation 출력 테스트 */
+	@RequestMapping(value="/testNationList")
+	public String printNation(Model model) {
+		List<Nation> nationList = nationDao.selectAll();
+		model.addAttribute("nationList", nationList);
+		List<Note> noteList = noteDao.selectAll();
+		model.addAttribute("noteList", noteList);
+		List<String> majorList = noteDao.selectAllMajor();
+		model.addAttribute("majorList", majorList);
+		
+		return "testNationList";
 	}
 	
 	/* 파일 업로드 테스트 

@@ -21,8 +21,13 @@
 		<table class="post-content-1">			
 			<tr>
 				<td colspan="2">
-					<button type="button" onClick="location.href='/coffee/posts'" class="short-button-1">목록으로</button>
-					<c:if test="${member.id==coffee.registrant}">
+					<c:if test="${admin!=null}">
+						<button type="button" onClick="location.href='/admin/manage-coffee-item'" class="short-button-1">목록으로</button>
+					</c:if>
+					<c:if test="${admin==null}">
+						<button type="button" onClick="location.href='/coffee/posts'" class="short-button-1">목록으로</button>
+					</c:if>
+					<c:if test="${member.id==coffee.registrant or admin!=null}">
 						<button type="button" onClick="location.href='/coffee/edit-coffee?num=${coffee.num}'" class="short-button-edit">수정</button>
 						<button type="button" onClick="location.href='/coffee/delete-coffee?num=${coffee.num}'" class="short-button-delete">삭제</button>
 					</c:if>					
@@ -62,6 +67,10 @@
 				<td>
 					<table border="1" class="post-content-1-detail">
 						<tr>
+							<td>원산지</td>
+							<td>${nation.country}(${nation.group})</td>
+						</tr>
+						<tr>
 							<td>제조사</td>
 							<td>${coffee.manufacturer}</td>
 						</tr>
@@ -75,7 +84,7 @@
 						</tr>
 						<tr>
 							<td>노트</td>
-							<td>${coffee.taste}</td>
+							<td>${note.major} | ${note.middle} | ${note.minor}</td>
 						</tr>
 						<tr>
 							<td>용량</td>

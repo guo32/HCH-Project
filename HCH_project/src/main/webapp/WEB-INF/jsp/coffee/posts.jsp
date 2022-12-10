@@ -45,6 +45,54 @@
 	}
 </script>
 <body>
+<script type="text/javascript">
+	function changeMajor(v) {
+		var value = v;		
+		var middle = document.querySelector('.middle-select');
+		var test = "";
+		// 옵션 초기화
+		middle.options.length = 0;
+		
+		var option = document.createElement("option");
+		option.innerText = "중분류";
+		option.value = "-1";
+		middle.append(option);
+		
+		<c:forEach var="note" items="${noteList}">
+			if("${note.major}" == value) {
+				if(test != "${note.middle}") { // 중복 제거
+					test = "${note.middle}";
+					// 옵션 추가
+					var option = document.createElement("option");
+					option.innerText = "${note.middle}";
+					option.value = "${note.middle}";
+					middle.append(option);
+				}
+			}
+		</c:forEach>
+	}
+	
+	function changeMiddle(v) {
+		var value = v;
+		var minor = document.querySelector('.minor-select');
+		// 옵션 초기화
+		minor.options.length = 0;
+		
+		var option = document.createElement("option");
+		option.innerText = "소분류";
+		option.value = "-1";
+		minor.append(option);
+		
+		<c:forEach var="note" items="${noteList}">
+		 	if("${note.middle}" == value) {
+		 		var option = document.createElement("option");
+		 		option.innerText = "${note.minor}";
+		 		option.value = "${note.noteid}";
+		 		minor.append(option);
+		 	}
+		</c:forEach>
+	}
+</script>
 <div id="wrap">
 	<!-- 상단 -->
 	<div id="wrap-content-top">
@@ -58,6 +106,28 @@
 			<div id="detailSearchButton" onclick="openAndCloseDetailSearch()" class="detail-search-button">상세검색 열기</div>
 			<form method="get" id="detailSearch" class="detail-search-form" action="${pageContext.request.contextPath}/coffee/posts-datail-search" style="display: none;">
 				<table style="border-collapse: collapse;">
+					<tr>
+						<td>원산지</td>
+						<td>
+							<select name="nation" id="nation">
+								<option value="null">원산지 선택</option>
+								<optgroup label="아라비카">
+									<c:forEach var="nation" items="${nationList}">
+										<c:if test="${nation.group eq '아라비카'}">
+											<option value="${nation.nationid}">${nation.country}</option>
+										</c:if>
+									</c:forEach>
+								</optgroup>
+								<optgroup label="로부스타">
+									<c:forEach var="nation" items="${nationList}">
+										<c:if test="${nation.group eq '로부스타'}">
+											<option value="${nation.nationid}">${nation.country}</option>
+										</c:if>
+									</c:forEach>
+								</optgroup>
+							</select>
+						</td>
+					</tr>
 					<tr>
 						<td>제조사</td>
 						<td>
@@ -89,22 +159,47 @@
 					<tr>
 						<td>로스팅</td>
 						<td>
-							<input type="radio" name="roastlevel" value="null" checked/>미선택
-							<input type="radio" name="roastlevel" value="Green Bean"/>Green Bean
-							<input type="radio" name="roastlevel" value="Very Light"/>Very Light
-							<input type="radio" name="roastlevel" value="Light"/>Light
-							<input type="radio" name="roastlevel" value="Cinnamon"/>Cinnamon
-							<input type="radio" name="roastlevel" value="Medium"/>Medium
-							<input type="radio" name="roastlevel" value="High"/>High
-							<input type="radio" name="roastlevel" value="City"/>City
-							<input type="radio" name="roastlevel" value="Full City"/>Full City
-							<input type="radio" name="roastlevel" value="French"/>French
-							<input type="radio" name="roastlevel" value="Itanlian"/>Italian
-							<input type="radio" name="roastlevel" value="No Data"/>정보 없음
+							<table>
+								<tr>
+									<td style="width:30%"><input type="radio" name="roastlevel" value="null" checked/>미선택</td>
+									<td><input type="radio" name="roastlevel" value="Green Bean"/><img src="${pageContext.request.contextPath}/resources/image/bean1.svg" width="25" height="25"/>Green Bean</td>
+									<td><input type="radio" name="roastlevel" value="Very Light"/><img src="${pageContext.request.contextPath}/resources/image/bean2.svg" width="25" height="25"/>Very Light</td>									
+								</tr>
+								<tr>
+									<td><input type="radio" name="roastlevel" value="Light"/><img src="${pageContext.request.contextPath}/resources/image/bean3.svg" width="25" height="25"/>Light</td>
+									<td><input type="radio" name="roastlevel" value="Cinnamon"/><img src="${pageContext.request.contextPath}/resources/image/bean4.svg" width="25" height="25"/>Cinnamon</td>
+									<td><input type="radio" name="roastlevel" value="Medium"/><img src="${pageContext.request.contextPath}/resources/image/bean5.svg" width="25" height="25"/>Medium</td>									
+								</tr>
+								<tr>
+									<td><input type="radio" name="roastlevel" value="High"/><img src="${pageContext.request.contextPath}/resources/image/bean6.svg" width="25" height="25"/>High</td>
+									<td><input type="radio" name="roastlevel" value="City"/><img src="${pageContext.request.contextPath}/resources/image/bean7.svg" width="25" height="25"/>City</td>
+									<td><input type="radio" name="roastlevel" value="Full City"/><img src="${pageContext.request.contextPath}/resources/image/bean8.svg" width="25" height="25"/>Full City</td>									
+								</tr>
+								<tr>
+									<td><input type="radio" name="roastlevel" value="French"/><img src="${pageContext.request.contextPath}/resources/image/bean9.svg" width="25" height="25"/>French</td>
+									<td><input type="radio" name="roastlevel" value="Itanlian"/><img src="${pageContext.request.contextPath}/resources/image/bean10.svg" width="25" height="25"/>Italian</td>
+									<td><input type="radio" name="roastlevel" value="No Data"/>정보 없음</td>
+								</tr>
+							</table>
 						</td>
 					</tr>
 					<tr>
 						<td>맛(노트)</td>
+						<td>
+							<select onchange="changeMajor(this.value)">
+								<option value="null">대분류</option>
+								<c:forEach var="major" items="${majorList}">
+									<option value="${major}">${major}</option>
+								</c:forEach>
+							</select>
+							<select class="middle-select" onchange="changeMiddle(this.value)">
+								<option value="-1">중분류</option>
+							</select>
+							<select name="taste" id="taste" class="minor-select">
+								<option value="-1">소분류</option>
+							</select>
+						</td>
+						<!-- 
 						<td>
 							<input type="radio" name="taste" value="null" checked/>미선택
 							<input type="radio" name="taste" value="견과류"/>견과류
@@ -112,9 +207,10 @@
 							<input type="radio" name="taste" value="과일향"/>과일향
 							<input type="radio" name="taste" value="꽃향기"/>꽃향기
 							<input type="radio" name="taste" id="tasteOther" value="other" onclick="showTasteOtherText()"/>기타
-							<!-- 기타 입력란 -->
+							기타입력란 부분
 							<input type="text" name="tasteOther" id="tasteOtherText" style="display: none;"/>
 						</td>
+						 -->
 					</tr>
 					<tr>
 						<td>용량</td>

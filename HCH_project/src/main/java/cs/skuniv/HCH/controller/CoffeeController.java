@@ -20,9 +20,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import cs.skuniv.HCH.dao.CoffeeDao;
 import cs.skuniv.HCH.dao.CommentDao;
+import cs.skuniv.HCH.dao.NationDao;
+import cs.skuniv.HCH.dao.NoteDao;
 import cs.skuniv.HCH.dto.Coffee;
 import cs.skuniv.HCH.dto.Comment;
 import cs.skuniv.HCH.dto.Member;
+import cs.skuniv.HCH.dto.Nation;
+import cs.skuniv.HCH.dto.Note;
 import cs.skuniv.HCH.request.CoffeeRegisterRequest;
 import cs.skuniv.HCH.request.CoffeeSearchDetailRequest;
 import cs.skuniv.HCH.request.CommentRegisterRequest;
@@ -49,6 +53,14 @@ public class CoffeeController {
 	@Autowired
 	private FavoriteService favoriteSvc;
 	
+	/* 원산지 정보 */
+	@Autowired
+	private NationDao nationDao;
+	
+	/* 커피 노트 정보 */
+	@Autowired
+	private NoteDao noteDao;
+	
 	/* 이미지 파일 업로드 */
 	public String fileUpload(MultipartFile file, HttpServletRequest req) {
 		ServletContext servletContext = req.getSession().getServletContext();
@@ -72,11 +84,29 @@ public class CoffeeController {
 		
 	/* 제품(커피)등록 페이지 접근 */
 	@RequestMapping(value="/coffee/register", method=RequestMethod.GET)
-	public String getCoffeeRegist() { return "coffee/register"; }
+	public String getCoffeeRegist(Model model) {
+		List<Nation> nationList = nationDao.selectAll();
+		List<Note> noteList = noteDao.selectAll();
+		model.addAttribute("nationList", nationList);
+		model.addAttribute("noteList", noteList);
+		
+		/*
+		 * note 데이터 가공에 대해
+		 * major 선택 --> middle 선택 --> minor 선택으로 조작하고 싶은데
+		 * major 리스트 출력 후에
+		 * 해당 major와 middle 리스트 비교
+		 * 
+		 */
+		List<String> majorList = noteDao.selectAllMajor();
+		model.addAttribute("majorList", majorList);
+		
+		return "coffee/register";		
+	}
 	
 	@RequestMapping(value="/coffee/register", method=RequestMethod.POST)
 	public String postCoffeeRegist(Model model) {
 		model.addAttribute("coffeeRegisterRequest", new CoffeeRegisterRequest());
+				
 		return "coffee/register";
 	}
 	
@@ -126,6 +156,19 @@ public class CoffeeController {
 		// 등록된 제품 정보		
 		Coffee coffee = coffeeDao.selectByNum(num);
 		model.addAttribute("coffee", coffee);
+		
+		/* 22.11.16
+		 * 등록된 제품 정보 --> 원산지 찾기
+		 */
+		Nation nation = nationDao.selectById(coffee.getNation());
+		model.addAttribute("nation", nation); // view에서 원산지(그룹) 형식으로 출력할 것
+		
+		/*
+		 * 22.11.17
+		 * 등록된 제품 정보 --> note 찾기
+		 * */
+		Note note = noteDao.selectById(coffee.getTaste());
+		model.addAttribute("note", note);
 		
 		// 등록된 댓글
 		List<Comment> comments = getRegistedComment(num, coffee.getCategory());
@@ -235,6 +278,16 @@ public class CoffeeController {
 		// 접속 중인 멤버
 		HttpSession session = req.getSession();
 		Member member = (Member)session.getAttribute("member");		
+		// 원산지 데이터
+		List<Nation> nationList = nationDao.selectAll();
+		model.addAttribute("nationList", nationList);
+		
+		/* 22.11.18 : note 관련 데이터 추가하기 */
+		List<Note> noteList = noteDao.selectAll();
+		model.addAttribute("noteList", noteList);
+		
+		List<String> majorList = noteDao.selectAllMajor();
+		model.addAttribute("majorList", majorList);
 		
 		if(search != null) {
 			coffeeList = coffeeDao.selectSearchString(search);			
@@ -271,6 +324,17 @@ public class CoffeeController {
 		Collections.reverse(coffeeList);
 		model.addAttribute("coffeeList", coffeeList);
 		
+		// 원산지 데이터
+		List<Nation> nationList = nationDao.selectAll();
+		model.addAttribute("nationList", nationList);
+		
+		/* 22.11.18 : note 관련 데이터 추가하기 */
+		List<Note> noteList = noteDao.selectAll();
+		model.addAttribute("noteList", noteList);
+		
+		List<String> majorList = noteDao.selectAllMajor();
+		model.addAttribute("majorList", majorList);
+		
 		return "coffee/posts";
 	}
 	
@@ -280,6 +344,21 @@ public class CoffeeController {
 		int num = Integer.parseInt(req.getParameter("num"));
 		Coffee coffee = coffeeDao.selectByNum(num);
 		model.addAttribute("coffee", coffee);
+		
+		/* 22.11.15 : nationList 추가하기 */
+		List<Nation> nationList = nationDao.selectAll();
+		model.addAttribute("nationList", nationList);
+		
+		/* 22.11.18 : note 관련 데이터 추가하기 */
+		List<Note> noteList = noteDao.selectAll();
+		model.addAttribute("noteList", noteList);
+		
+		List<String> majorList = noteDao.selectAllMajor();
+		model.addAttribute("majorList", majorList);
+		
+		/* 해당 커피의 노트 정보 */
+		Note note = noteDao.selectById(coffee.getTaste());
+		model.addAttribute("note", note);
 		
 		return "coffee/edit-coffee"; 
 	}

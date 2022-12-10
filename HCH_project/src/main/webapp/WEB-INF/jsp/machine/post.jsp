@@ -21,8 +21,13 @@
 		<table class="post-content-1">			
 			<tr>
 				<td colspan="2">
-					<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
-					<c:if test="${member.id==machine.registrant}">
+					<c:if test="${admin!=null}">
+						<button type="button" onClick="location.href='/admin/manage-machine-item'" class="short-button-1">목록으로</button>
+					</c:if>
+					<c:if test="${admin==null}">
+						<button type="button" onClick="location.href='/machine/posts'" class="short-button-1">목록으로</button>
+					</c:if>
+					<c:if test="${member.id==machine.registrant or admin!=null}">
 						<button type="button" onClick="location.href='/machine/edit-machine?id=${machine.id}'" class="short-button-edit">수정</button>
 						<button type="button" onClick="location.href='/machine/delete-machine?id=${machine.id}'" class="short-button-delete">삭제</button>
 					</c:if>					

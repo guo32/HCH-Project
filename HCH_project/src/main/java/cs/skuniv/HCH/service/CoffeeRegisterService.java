@@ -34,8 +34,8 @@ public class CoffeeRegisterService {
 			throw new Exception("DuplicateIdException");
 		}
 		*/
-		Coffee newCoffee = new Coffee(req.getCategory(), req.getName(), req.getManufacturer(),
-				Integer.parseInt(req.getPrice()), req.getRoastlevel(), req.getTaste(),
+		Coffee newCoffee = new Coffee(req.getCategory(), req.getName(), req.getManufacturer(), Integer.parseInt(req.getNation()),
+				Integer.parseInt(req.getPrice()), req.getRoastlevel(), Integer.parseInt(req.getTaste()),
 				Integer.parseInt(req.getVolume()), Double.parseDouble(req.getRating()),
 				Double.parseDouble(req.getRating()), req.getReview(), LocalDateTime.now(), 
 				req.getRegistrant(), req.getFilename());
@@ -52,9 +52,10 @@ public class CoffeeRegisterService {
 		}
 		coffee.setName(regReq.getName());
 		coffee.setManufacturer(regReq.getManufacturer());
+		coffee.setNation(Integer.parseInt(regReq.getNation()));
 		coffee.setPrice(Integer.parseInt(regReq.getPrice()));
 		coffee.setRoastlevel(regReq.getRoastlevel());
-		coffee.setTaste(regReq.getTaste());
+		coffee.setTaste(Integer.parseInt(regReq.getTaste()));
 		coffee.setVolume(Integer.parseInt(regReq.getVolume()));
 		coffee.setReview(regReq.getReview());
 		coffee.setFilename(regReq.getFilename());

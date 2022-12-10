@@ -21,8 +21,8 @@ public class CoffeeDao {
 	private RowMapper<Coffee> coffeeRowMapper = new RowMapper<Coffee>() {
 		public Coffee mapRow(ResultSet rs, int rowNum) throws SQLException {
 			Coffee coffee = new Coffee(rs.getInt("num"), rs.getString("category"), rs.getString("name"), 
-					rs.getString("manufacturer"), rs.getInt("price"), rs.getString("roastlevel"),
-					rs.getString("taste"), rs.getInt("volume"), rs.getDouble("rating"),
+					rs.getString("manufacturer"), rs.getInt("nation"), rs.getInt("price"), rs.getString("roastlevel"),
+					rs.getInt("taste"), rs.getInt("volume"), rs.getDouble("rating"),
 					rs.getDouble("ratingsum"), rs.getString("review"),
 					LocalDateTime.parse(rs.getString("regdate"), format),
 					rs.getString("registrant"), rs.getString("filename"), rs.getInt("favorite"), rs.getInt("comment"));
@@ -36,9 +36,9 @@ public class CoffeeDao {
 	
 	/* 제품(coffee) 삽입 */
 	public void insert(final Coffee coffee) {
-		jdbcTemplate.update("insert into coffee(num, category, name, manufacturer, price, roastlevel, taste, volume, rating, ratingsum, review, regdate, registrant, filename)" + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
+		jdbcTemplate.update("insert into coffee(num, category, name, manufacturer, nation, price, roastlevel, taste, volume, rating, ratingsum, review, regdate, registrant, filename)" + " values(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
 				coffee.getNum(), coffee.getCategory(), coffee.getName(),
-				coffee.getManufacturer(), coffee.getPrice(), coffee.getRoastlevel(),
+				coffee.getManufacturer(), coffee.getNation(), coffee.getPrice(), coffee.getRoastlevel(),
 				coffee.getTaste(), coffee.getVolume(), coffee.getRating(), coffee.getRatingsum(), coffee.getReview(),
 				coffee.getRegdate(), coffee.getRegistrant(), coffee.getFilename());
 	}
@@ -80,6 +80,13 @@ public class CoffeeDao {
 		return results;
 	}
 	
+	/* 원산지별 검색 */
+	public List<Coffee> selectNation(int nation) {
+		List<Coffee> results = jdbcTemplate.query("select * from coffee where nation = ?", coffeeRowMapper, nation);
+		
+		return results;
+	}
+	
 	/* 일반 검색 */
 	public List<Coffee> selectSearchString(String search) {
 		String searchData = "%" + search + "%";
@@ -112,8 +119,8 @@ public class CoffeeDao {
 		
 	/* 제품(coffee) 수정 */
 	public void update(final Coffee coffee) {
-		jdbcTemplate.update("update coffee set name = ?, manufacturer = ?, price = ?, roastlevel = ?, taste = ?, volume = ?, review = ?, filename = ?" + " where num = ?",
-				coffee.getName(), coffee.getManufacturer(), coffee.getPrice(), 
+		jdbcTemplate.update("update coffee set name = ?, manufacturer = ?, nation = ?, price = ?, roastlevel = ?, taste = ?, volume = ?, review = ?, filename = ?" + " where num = ?",
+				coffee.getName(), coffee.getManufacturer(), coffee.getNation(), coffee.getPrice(), 
 				coffee.getRoastlevel(),	coffee.getTaste(), coffee.getVolume(), 
 				coffee.getReview(),	coffee.getFilename(), coffee.getNum());
 	}
