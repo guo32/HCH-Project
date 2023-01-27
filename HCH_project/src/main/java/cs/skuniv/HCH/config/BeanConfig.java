@@ -37,9 +37,9 @@ public class BeanConfig {
 		DataSource ds = new DataSource();
 		
 		ds.setDriverClassName("com.mysql.jdbc.Driver");
-		ds.setUrl("jdbc:mysql://localhost/hch?characterEncoding=utf8&serverTimezone=UTC");
-		ds.setUsername("root");
-		ds.setPassword("1234");
+		ds.setUrl("-");
+		ds.setUsername("-");
+		ds.setPassword("-");
 		ds.setInitialSize(2);
 		ds.setMaxActive(10);
 		ds.setTestWhileIdle(true);
